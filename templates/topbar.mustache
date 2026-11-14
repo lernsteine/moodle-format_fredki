@@ -1,0 +1,60 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_fredki/topbar
+
+    The row at the top: the people of the course, the most recently active first. A tap on a person
+    shows the status and the way to write to them.
+
+    Example context (json):
+    {
+        "people": {"show": true, "onlinelabel": "3 online", "hasmore": true, "more": 4, "allurl": "#",
+            "list": [{"id": 3, "firstname": "Lena", "fullname": "Lena Hoffmann", "initials": "LH", "colour": "c1",
+                "hasavatar": false, "online": true, "status": "online", "messageurl": "#", "profileurl": "#"}]},
+        "links": {"canedit": true, "editurl": "#"}
+    }
+}}
+<header class="ffk-top">
+    {{#people.show}}
+    <div class="ffk-people" aria-label="{{#str}}whoishere, format_fredki{{/str}}" role="group">
+        <span class="ffk-people__count"><span class="ffk-live" aria-hidden="true"></span>{{people.onlinelabel}}</span>
+        <ul class="ffk-people__list">
+            {{#people.list}}
+            <li>
+                <details class="ffk-person" data-region="person">
+                    <summary class="ffk-person__face" aria-label="{{fullname}} · {{status}}">
+                        {{> format_fredki/avatar }}<span class="ffk-seat__dot{{#online}} is-online{{/online}}" aria-hidden="true"></span>
+                    </summary>
+                    <div class="ffk-person__card">
+                        <span class="ffk-person__name">{{fullname}}</span>
+                        <span class="ffk-person__status{{#online}} is-online{{/online}}">{{status}}</span>
+                        <span class="ffk-person__actions">
+                            {{#messageurl}}<a class="ffk-person__btn" href="{{messageurl}}">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+                                {{#str}}writemessage, format_fredki{{/str}}</a>{{/messageurl}}
+                            <a class="ffk-person__link" href="{{profileurl}}">{{#str}}profile{{/str}}</a>
+                        </span>
+                    </div>
+                </details>
+            </li>
+            {{/people.list}}
+        </ul>
+        {{#people.hasmore}}<a class="ffk-people__more" href="{{people.allurl}}" title="{{#str}}participants{{/str}}">+{{people.more}}</a>{{/people.hasmore}}
+    </div>
+    {{/people.show}}
+    {{#links.canedit}}<a class="ffk-top__edit" href="{{links.editurl}}">{{#str}}editcourse, format_fredki{{/str}}</a>{{/links.canedit}}
+</header>

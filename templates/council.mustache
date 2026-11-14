@@ -1,0 +1,77 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_fredki/council
+
+    Side bar "The council": the AI of the course (FredKI or the team agents).
+
+    Example context (json):
+    {
+        "activelabel": "2 aktiv",
+        "agents": [{"id": 1, "name": "Die Expertin", "role": "Fachwissen aus ihrem Ordner", "colour": "#3149d6",
+            "image": "https://example.com/a.jpg", "active": true, "ready": true, "statuslabel": "bereit",
+            "canmanage": true, "toggle": "Die Expertin pausieren", "opacity": "1"}],
+        "hasteamagents": true,
+        "canconvene": true
+    }
+}}
+<aside class="ffk-council" aria-labelledby="ffk-council-title" data-region="council">
+    {{#coursematurity}}
+    <section class="ffk-council__card ffk-coursemat" aria-labelledby="ffk-coursemat-title">
+        <h3 class="ffk-coursemat__title" id="ffk-coursemat-title">{{#str}}maturity_course, format_fredki{{/str}}</h3>
+        {{#hasscore}}
+        <div class="ffk-coursemat__row">
+            {{> format_fredki/gauge }}
+            <div>
+                <div class="ffk-coursemat__level">{{label}}</div>
+                <div class="ffk-coursemat__meta">{{ratedlabel}}</div>
+            </div>
+        </div>
+        {{/hasscore}}
+        {{^hasscore}}<p class="ffk-coursemat__meta">{{#str}}maturity_none, format_fredki{{/str}}</p>{{/hasscore}}
+        <p class="ffk-coursemat__note">{{#str}}maturity_note, format_fredki{{/str}}</p>
+        {{#canoverview}}<a class="ffk-coursemat__link" href="{{overviewurl}}">{{#str}}maturity_overview, format_fredki{{/str}}</a>{{/canoverview}}
+    </section>
+    {{/coursematurity}}
+    <div class="ffk-council__card">
+        <div class="ffk-council__head">
+            <h3 class="ffk-council__title" id="ffk-council-title">{{#str}}council, format_fredki{{/str}} <span class="ffk-ai-chip">{{#str}}aichip, format_fredki{{/str}}</span></h3>
+            <span class="ffk-council__count">{{activelabel}}</span>
+        </div>
+        <div class="ffk-council__group">
+            {{#agents}}
+            <div class="ffk-seat" {{#id}}data-agentid="{{id}}"{{/id}}>
+                {{#isfredki}}<span class="ffk-seat__pic"><span class="ffk-orb ffk-orb--s" aria-hidden="true"></span></span>{{/isfredki}}
+                {{^isfredki}}<img class="ffk-seat__img" src="{{image}}" alt="" style="border-color: {{colour}}; opacity: {{opacity}}" data-region="agentpic">{{/isfredki}}
+                <span class="ffk-seat__text" {{^isfredki}}style="opacity: {{opacity}}"{{/isfredki}} data-region="agenttext">
+                    <span class="ffk-seat__name" {{#colour}}style="color: {{colour}}"{{/colour}}>{{name}}</span>
+                    <span class="ffk-seat__meta">{{#ready}}{{role}}{{/ready}}{{^ready}}{{statuslabel}}{{/ready}}</span>
+                </span>
+                {{#canmanage}}
+                <button type="button" class="ffk-switch" data-action="agenttoggle" data-agentid="{{id}}" aria-pressed="{{#active}}true{{/active}}{{^active}}false{{/active}}" aria-label="{{toggle}}" title="{{toggle}}">
+                    <span class="ffk-switch__track"><span class="ffk-switch__knob"></span></span>
+                </button>
+                {{/canmanage}}
+            </div>
+            {{/agents}}
+        </div>
+        {{#hasteamagents}}
+        <p class="ffk-council__note">{{#str}}councilnote, format_fredki{{/str}}</p>
+        {{/hasteamagents}}
+        {{#privacy.show}}<button type="button" class="ffk-privacylink" data-action="privacy">{{#str}}privacylink, format_fredki{{/str}}</button>{{/privacy.show}}
+    </div>
+</aside>

@@ -1,0 +1,4601 @@
+/* FredKI course format.
+ * Layout: one calm axis. A large image with the question and the FredKI glass bar, the learning
+ * path as a row of images, then the group as a wall of image cards. Text only where it lets people act.
+ */
+
+.ffk {
+    --ffk-bg: #f4f5f7;
+    --ffk-surface: #fff;
+    --ffk-ink: #101826;
+    --ffk-muted: #5e6878;
+    --ffk-line: #e3e6ec;
+    --ffk-ai: #4f6bff;
+    --ffk-ai-deep: #2234a8;
+    --ffk-human: #0c7f6c;
+    --ffk-glass: rgba(255, 255, 255, .16);
+    --ffk-glass-line: rgba(255, 255, 255, .38);
+    --ffk-display: "Schibsted Grotesk", "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --ffk-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --ffk-r: 24px;
+    font-family: var(--ffk-body);
+    color: var(--ffk-ink);
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding-bottom: 48px;
+}
+
+.ffk *,
+.ffk *::before,
+.ffk *::after {
+    box-sizing: border-box;
+}
+
+.ffk img {
+    display: block;
+    max-width: 100%;
+}
+
+.ffk button,
+.ffk input,
+.ffk textarea {
+    font: inherit;
+}
+
+.ffk-share input,
+.ffk-share textarea {
+    color: var(--ffk-ink);
+}
+
+.ffk :focus-visible {
+    outline: 3px solid var(--ffk-ai);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+.ffk .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* Calm theme chrome on the course page. Teachers get the full chrome while editing. */
+body.fredki-immersive.path-course-view:not(.editing) #page-header,
+body.fredki-immersive.path-course-view:not(.editing) .secondary-navigation,
+body.fredki-immersive.path-course-view:not(.editing) .course-content-header,
+body.fredki-immersive.path-course-view:not(.editing) .activity-header {
+    display: none !important;
+}
+
+body.fredki-immersive.path-course-view:not(.editing) #page,
+body.fredki-immersive.path-course-view:not(.editing) #page.drawers .main-inner {
+    background: #f4f5f7;
+}
+
+body.fredki-immersive.path-course-view:not(.editing) #page.drawers .main-inner {
+    max-width: 1320px;
+    margin-top: 12px;
+    padding-top: 0;
+    box-shadow: none;
+}
+
+/* Large section images stay compact while editing. */
+body.format-fredki.editing .course-content .summarytext img {
+    max-height: 160px;
+    width: auto;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+/* Top bar */
+.ffk-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding-block: 6px 16px;
+}
+
+.ffk-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--ffk-display);
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ffk-ink);
+    text-decoration: none;
+    min-width: 0;
+}
+
+.ffk-brand:hover {
+    color: var(--ffk-ink);
+    text-decoration: none;
+}
+
+.ffk-top__right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ffk-links {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.ffk-links a {
+    color: var(--ffk-muted);
+    font-weight: 500;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    text-decoration: none;
+}
+
+.ffk-links a:hover {
+    background: var(--ffk-surface);
+    color: var(--ffk-ink);
+}
+
+.ffk-links .ffk-links__edit {
+    color: var(--ffk-ink);
+    border: 1px solid var(--ffk-line);
+    background: var(--ffk-surface);
+}
+
+.ffk-presence {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+.ffk-faces {
+    display: flex;
+}
+
+.ffk-faces .ffk-av {
+    margin-left: -8px;
+    border: 2px solid var(--ffk-bg);
+}
+
+.ffk-faces .ffk-av:first-child {
+    margin-left: 0;
+}
+
+.ffk-live {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #22a06b;
+    margin-right: 6px;
+    animation: ffk-breathe 2.4s ease-in-out infinite;
+}
+
+/* Avatars */
+.ffk-av {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    display: inline-grid;
+    place-items: center;
+    flex: none;
+    font-size: 12px;
+    font-weight: 600;
+    object-fit: cover;
+}
+
+.ffk-av--c1 { background: #dce6fb; color: #1e3a9e; }
+.ffk-av--c2 { background: #d9f0ea; color: #0a5e50; }
+.ffk-av--c3 { background: #efe3fa; color: #5a3696; }
+.ffk-av--c4 { background: #fbe8da; color: #8a4313; }
+.ffk-av--c5 { background: #e4e8ef; color: #2b3647; }
+
+/* FredKI orb */
+.ffk-orb {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    flex: none;
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    color: #fff;
+    background: radial-gradient(circle at 35% 30%, #c3d0ff, var(--ffk-ai) 60%, var(--ffk-ai-deep));
+    animation: ffk-breathe 4.5s ease-in-out infinite;
+}
+
+.ffk-orb::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+    border: 2px solid #a9b9ff;
+    opacity: .5;
+    animation: ffk-ring 4.5s ease-in-out infinite;
+}
+
+.ffk-orb--s {
+    width: 28px;
+    height: 28px;
+}
+
+.ffk-orb--s::after {
+    inset: -4px;
+}
+
+.ffk-orb--xs {
+    width: 22px;
+    height: 22px;
+}
+
+.ffk-orb--xs::after {
+    display: none;
+}
+
+@keyframes ffk-breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.07); }
+}
+
+@keyframes ffk-ring {
+    0%, 100% { transform: scale(1); opacity: .45; }
+    50% { transform: scale(1.22); opacity: 0; }
+}
+
+@keyframes ffk-pop {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+}
+
+@keyframes ffk-drift {
+    from { transform: scale(1.03); }
+    to { transform: scale(1.12) translate(-1.5%, -1%); }
+}
+
+@keyframes ffk-dot {
+    0%, 100% { opacity: .3; transform: none; }
+    50% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* Hero */
+.ffk-hero {
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    min-height: 520px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background: #1f2b44;
+    isolation: isolate;
+}
+
+.ffk-hero--step {
+    min-height: 440px;
+}
+
+.ffk-hero__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none !important;
+    object-fit: cover;
+    z-index: -2;
+    animation: ffk-drift 30s ease-in-out infinite alternate;
+}
+
+.ffk-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(10, 16, 32, 0) 30%, rgba(10, 16, 32, .6) 100%);
+}
+
+.ffk-hero__in {
+    padding: clamp(20px, 4vw, 44px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    color: #fff;
+}
+
+.ffk-hero__q {
+    margin: 0;
+    color: #fff;
+    font-family: var(--ffk-display);
+    font-weight: 700;
+    font-size: clamp(34px, 5.4vw, 64px);
+    line-height: 1.03;
+    letter-spacing: -.03em;
+    max-width: 22ch;
+    text-wrap: balance;
+}
+
+.ffk-hero__text {
+    margin: -4px 0 0;
+    max-width: 56ch;
+    color: rgba(255, 255, 255, .9);
+    font-size: 17px;
+}
+
+.ffk-eyebrow {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .85);
+}
+
+.ffk-back {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid var(--ffk-glass-line);
+    border-radius: 999px;
+    padding: 7px 14px 7px 10px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.ffk-back:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, .28);
+    text-decoration: none;
+}
+
+/* FredKI glass bar */
+.ffk-glass {
+    background: var(--ffk-glass);
+    border: 1px solid var(--ffk-glass-line);
+    backdrop-filter: blur(18px) saturate(1.3);
+    -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border-radius: 26px;
+    padding: 12px;
+    max-width: 720px;
+    color: #fff;
+}
+
+.ffk-askrow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ffk-askrow input,
+.ffk-askrow textarea {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 17px;
+    color: #fff;
+    padding: 10px 0;
+}
+
+.ffk-askrow input::placeholder,
+.ffk-askrow textarea::placeholder {
+    color: rgba(255, 255, 255, .85);
+}
+
+.ffk-go {
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ffk-ink);
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+
+.ffk-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 0 2px 56px;
+}
+
+.ffk-chip {
+    border: 1px solid var(--ffk-glass-line);
+    background: rgba(255, 255, 255, .12);
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background .2s;
+}
+
+.ffk-chip:hover {
+    background: rgba(255, 255, 255, .26);
+}
+
+.ffk-private {
+    font-size: 12px;
+    color: rgba(255, 255, 255, .78);
+    padding: 8px 0 2px 56px;
+}
+
+.ffk-convo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px 0 4px 56px;
+    max-height: 340px;
+    overflow: auto;
+}
+
+.ffk-convo:empty {
+    display: none;
+}
+
+.ffk-bubble {
+    max-width: 580px;
+    padding: 11px 15px;
+    border-radius: 18px;
+    font-size: 15px;
+    animation: ffk-pop .35s ease both;
+}
+
+.ffk-bubble--me {
+    align-self: flex-end;
+    background: #fff;
+    color: var(--ffk-ink);
+    border-bottom-right-radius: 6px;
+}
+
+.ffk-bubble--ai {
+    background: rgba(16, 24, 38, .58);
+    color: #fff;
+    border-top-left-radius: 6px;
+}
+
+.ffk-bubble ul {
+    margin: 6px 0;
+    padding-left: 18px;
+}
+
+.ffk-bubble p {
+    margin: 0 0 6px;
+}
+
+.ffk-bubble p:last-child {
+    margin-bottom: 0;
+}
+
+.ffk-acts-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.ffk-pillbtn {
+    border: none;
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-size: 13px;
+    font-weight: 600;
+    background: #fff;
+    color: var(--ffk-ink);
+    text-decoration: none;
+}
+
+.ffk-pillbtn:hover {
+    color: var(--ffk-ink);
+    text-decoration: none;
+}
+
+.ffk-pillbtn--ghost {
+    background: transparent;
+    color: #fff;
+    border: 1px solid var(--ffk-glass-line);
+}
+
+.ffk-pillbtn--ghost:hover {
+    color: #fff;
+}
+
+.ffk-related {
+    margin-top: 10px;
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.ffk-related a {
+    color: #fff;
+    background: rgba(12, 127, 108, .7);
+    border-radius: 999px;
+    padding: 5px 11px;
+    text-decoration: none;
+}
+
+.ffk-typing {
+    display: inline-flex;
+    gap: 4px;
+    padding: 6px 2px;
+}
+
+.ffk-typing i {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: currentColor;
+    animation: ffk-dot 1s infinite;
+}
+
+.ffk-typing i:nth-child(2) {
+    animation-delay: .15s;
+}
+
+.ffk-typing i:nth-child(3) {
+    animation-delay: .3s;
+}
+
+/* Learning path */
+.ffk-path {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    padding-block: 22px 4px;
+}
+
+.ffk-stage {
+    position: relative;
+    display: block;
+    border-radius: 22px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: #233049;
+    color: #fff;
+    text-decoration: none;
+}
+
+.ffk-stage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .6s ease;
+}
+
+.ffk-stage:hover img {
+    transform: scale(1.05);
+}
+
+.ffk-stage::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, .55));
+}
+
+.ffk-stage__name {
+    position: absolute;
+    left: 16px;
+    right: 56px;
+    bottom: 14px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-family: var(--ffk-display);
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 1.2;
+}
+
+.ffk-stage__progress {
+    position: absolute;
+    right: 14px;
+    bottom: 14px;
+    z-index: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: rgba(0, 0, 0, .35);
+    border-radius: 999px;
+    padding: 3px 9px;
+}
+
+.ffk-stage.is-current {
+    box-shadow: 0 0 0 3px var(--ffk-bg), 0 0 0 6px var(--ffk-human);
+}
+
+.ffk-stage.is-current .ffk-stage__name::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: #5be3c6;
+    animation: ffk-breathe 2s infinite;
+}
+
+.ffk-stage.is-complete .ffk-stage__progress {
+    background: var(--ffk-human);
+}
+
+.ffk-stage.is-locked img {
+    filter: grayscale(.7) brightness(.8);
+}
+
+.ffk-startacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 16px;
+}
+
+.ffk-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: 999px;
+    padding: 7px 14px 7px 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ffk-ink);
+    text-decoration: none;
+}
+
+.ffk-pill:hover {
+    color: var(--ffk-ink);
+    border-color: #c9cfd9;
+    text-decoration: none;
+}
+
+.ffk-pill__icon {
+    width: 22px;
+    height: 22px;
+}
+
+/* The group */
+.ffk-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-block: 28px 14px;
+}
+
+.ffk-h {
+    margin: 0;
+    font-family: var(--ffk-display);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+}
+
+.ffk-share {
+    flex: 1 1 320px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: 999px;
+    padding: 6px 6px 6px 18px;
+    max-width: 560px;
+    margin-left: auto;
+}
+
+.ffk-share input,
+.ffk-share textarea {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 15px;
+    padding: 8px 0;
+}
+
+.ffk-share button {
+    border: none;
+    border-radius: 999px;
+    background: var(--ffk-human);
+    color: #fff;
+    padding: 10px 18px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.ffk-share.is-answering {
+    box-shadow: 0 0 0 3px rgba(79, 107, 255, .35);
+}
+
+.ffk-wall {
+    columns: 3 300px;
+    column-gap: 16px;
+}
+
+.ffk-wall--compact {
+    columns: 3 260px;
+}
+
+.ffk-card {
+    break-inside: avoid;
+    margin: 0 0 16px;
+    position: relative;
+    display: grid;
+    border-radius: var(--ffk-r);
+    overflow: hidden;
+    background: #233049;
+    color: #fff;
+    animation: ffk-pop .45s ease both;
+}
+
+.ffk-card__img {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ffk-card--tall .ffk-card__img { aspect-ratio: 4 / 5; }
+.ffk-card--wide .ffk-card__img { aspect-ratio: 4 / 3; }
+.ffk-card--square .ffk-card__img { aspect-ratio: 1 / 1; }
+
+.ffk-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, .45) 58%, rgba(0, 0, 0, .78));
+    pointer-events: none;
+    z-index: 1;
+}
+
+.ffk-card__body {
+    grid-area: 1 / 1;
+    align-self: end;
+    position: relative;
+    z-index: 2;
+    padding: 16px;
+    padding-top: 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+
+.ffk-who {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, .9);
+}
+
+.ffk-who .ffk-av {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+}
+
+.ffk-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(79, 107, 255, .75);
+    border-radius: 999px;
+    padding: 2px 9px 2px 6px;
+}
+
+.ffk-badge .ffk-spark {
+    width: 12px;
+    height: 12px;
+}
+
+.ffk-card__say {
+    font-family: var(--ffk-display);
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    color: #fff;
+    text-decoration: none;
+    text-wrap: balance;
+    margin: 0;
+}
+
+a.ffk-card__say:hover {
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+}
+
+.ffk-card__say--big {
+    font-size: 26px;
+}
+
+.ffk-card__notes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.ffk-card:has(.ffk-card__notes:not(:empty)) .ffk-card__img,
+.ffk-card:has(.ffk-inline:not([hidden])) .ffk-card__img {
+    min-height: 360px;
+}
+
+.ffk-card__notes:empty {
+    display: none;
+}
+
+.ffk-note {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    background: rgba(16, 24, 38, .55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 9px 11px;
+    font-size: 14px;
+    animation: ffk-pop .35s ease both;
+}
+
+.ffk-note .ffk-av {
+    width: 22px;
+    height: 22px;
+    font-size: 9px;
+}
+
+.ffk-note--ai {
+    background: rgba(34, 52, 168, .62);
+}
+
+.ffk-note__text {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-width: 0;
+}
+
+.ffk-note__text p {
+    margin: 0 0 4px;
+}
+
+.ffk-card__actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.ffk-ic {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .16);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #fff;
+    height: 36px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ffk-ic:hover {
+    background: rgba(255, 255, 255, .26);
+}
+
+.ffk-ic.is-on {
+    background: #e0344f;
+    color: #fff;
+}
+
+.ffk-ic.is-on svg path {
+    fill: currentColor;
+}
+
+.ffk-ic.is-on:hover {
+    background: #c8283f;
+}
+
+.ffk-ic--ai {
+    background: rgba(79, 107, 255, .78);
+}
+
+.ffk-ic--ai:hover {
+    background: rgba(79, 107, 255, .95);
+}
+
+.ffk-ic--solid {
+    background: #fff;
+    color: var(--ffk-ink);
+}
+
+.ffk-ic--solid:hover {
+    background: #fff;
+}
+
+.ffk-inline {
+    display: flex;
+    gap: 6px;
+}
+
+.ffk-inline input,
+.ffk-inline textarea {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--ffk-glass-line);
+    background: rgba(255, 255, 255, .14);
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 14px;
+    outline: none;
+}
+
+.ffk-inline input::placeholder,
+.ffk-inline textarea::placeholder {
+    color: rgba(255, 255, 255, .8);
+}
+
+.ffk-kicker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ffk-more {
+    display: inline-block;
+    margin-top: 4px;
+    color: var(--ffk-muted);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ffk-more--inline {
+    margin: 0 0 0 auto;
+}
+
+.ffk-empty {
+    color: var(--ffk-muted);
+    background: var(--ffk-surface);
+    border: 1px dashed #cdd3dd;
+    border-radius: var(--ffk-r);
+    padding: 22px;
+    margin: 0 0 16px;
+}
+
+.ffk-empty p {
+    margin: 0 0 12px;
+}
+
+.ffk-empty p:last-child {
+    margin: 0;
+}
+
+/* Learning step: materials */
+.ffk-acts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    padding-top: 22px;
+}
+
+.ffk-act {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: 20px;
+    padding: 14px 16px;
+    color: var(--ffk-ink);
+    text-decoration: none;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+a.ffk-act:hover {
+    color: var(--ffk-ink);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(16, 24, 38, .08);
+}
+
+.ffk-act__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: var(--ffk-bg);
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+
+.ffk-act__icon img {
+    width: 24px;
+    height: 24px;
+}
+
+.ffk-act__main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.ffk-act__name {
+    font-weight: 600;
+}
+
+.ffk-act__type,
+.ffk-act__avail {
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+.ffk-act__check {
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: 2px solid #cdd3dd;
+    color: transparent;
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+
+.ffk-act__check.is-on {
+    background: var(--ffk-human);
+    border-color: var(--ffk-human);
+    color: #fff;
+}
+
+.ffk-act.is-restricted {
+    opacity: .7;
+}
+
+.ffk-act--text {
+    display: block;
+    grid-column: 1 / -1;
+}
+
+.ffk-act--text img {
+    border-radius: 14px;
+}
+
+.ffk-stepnav {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding-top: 22px;
+}
+
+.ffk-stepnav__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: 20px;
+    padding: 8px 16px 8px 8px;
+    color: var(--ffk-ink);
+    text-decoration: none;
+    min-width: 0;
+    max-width: 48%;
+}
+
+.ffk-stepnav__item:hover {
+    color: var(--ffk-ink);
+    text-decoration: none;
+}
+
+.ffk-stepnav__item--next {
+    flex-direction: row-reverse;
+    padding: 8px 8px 8px 16px;
+    text-align: right;
+}
+
+.ffk-stepnav__item img {
+    width: 64px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex: none;
+}
+
+.ffk-stepnav__item span {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    min-width: 0;
+}
+
+.ffk-stepnav__item small {
+    color: var(--ffk-muted);
+    font-weight: 500;
+}
+
+/* Teacher hint while editing */
+.ffk-edithint {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    background: #eef2fd;
+    border: 1px solid #d5defa;
+    border-radius: 18px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+}
+
+.ffk-edithint__text {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 300px;
+    font-size: 14px;
+}
+
+.ffk-edithint .ffk-orb {
+    color: #fff;
+}
+
+
+/* FredKI as a participant */
+.ffk-card--fredki {
+    box-shadow: 0 0 0 2px rgba(79, 107, 255, .55);
+}
+
+.ffk-card--fredki::before {
+    background: linear-gradient(180deg, rgba(20, 30, 90, 0) 25%, rgba(20, 30, 90, .5) 58%, rgba(14, 22, 70, .85));
+}
+
+.ffk-type {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, .2);
+}
+
+.ffk-type--question { background: rgba(240, 160, 106, .85); color: #2a1406; }
+.ffk-type--idea { background: rgba(255, 214, 102, .9); color: #2b2104; }
+.ffk-type--experience { background: rgba(91, 227, 198, .85); color: #06302a; }
+
+.ffk-note small {
+    opacity: .8;
+    font-size: 11px;
+}
+
+.ffk-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: -2px 0 14px;
+}
+
+.ffk-filter {
+    border: 1px solid var(--ffk-line);
+    background: var(--ffk-surface);
+    color: var(--ffk-muted);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ffk-filter.is-active {
+    background: var(--ffk-ink);
+    border-color: var(--ffk-ink);
+    color: #fff;
+}
+
+.ffk-card[hidden] {
+    display: none;
+}
+
+.ffk-share {
+    flex-wrap: wrap;
+}
+
+.ffk-kinds {
+    display: flex;
+    gap: 4px;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+}
+
+.ffk-kind {
+    margin: 0;
+    cursor: pointer;
+}
+
+.ffk-kind input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ffk-kind span {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 6px 11px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ffk-muted);
+    background: var(--ffk-bg);
+}
+
+.ffk-kind input:checked + span {
+    background: var(--ffk-ink);
+    color: #fff;
+}
+
+.ffk-kind input:focus-visible + span {
+    outline: 3px solid var(--ffk-ai);
+    outline-offset: 2px;
+}
+
+.ffk-share {
+    max-width: 680px;
+}
+
+/* Course agent status for teachers */
+.ffk-agentstatus {
+    flex: 1 1 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-top: 1px solid #d5defa;
+    padding-top: 12px;
+}
+
+.ffk-agentstatus--alone {
+    border: 1px solid #f1c9c4;
+    border-radius: 12px;
+    background: #fdf3f2;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+}
+
+.ffk-agentstatus__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    background: #9aa4b6;
+    flex: none;
+}
+
+.ffk-agentstatus--ready .ffk-agentstatus__dot { background: #22a06b; }
+.ffk-agentstatus--building .ffk-agentstatus__dot { background: #4f6bff; animation: ffk-breathe 1.6s infinite; }
+.ffk-agentstatus--error .ffk-agentstatus__dot { background: #c2354b; }
+
+.ffk-agentstatus__form {
+    margin: 0;
+}
+
+/* Two columns: the conversation and the side bar "Who is here". */
+.ffk-cols {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: flex-start;
+}
+
+.ffk-cols > .ffk-round {
+    flex: 999 1 620px;
+    min-width: 0;
+}
+
+.ffk-council {
+    flex: 1 1 260px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.ffk-council__card {
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: var(--ffk-r);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ffk-council__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.ffk-council__title {
+    margin: 0;
+    font-family: var(--ffk-display);
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.ffk-council__count,
+.ffk-council__note {
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+.ffk-council__note {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.ffk-council__group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ffk-council__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ffk-muted);
+}
+
+.ffk-council__rule {
+    height: 1px;
+    background: var(--ffk-line);
+}
+
+.ffk-seat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 40px;
+}
+
+.ffk-seat__pic {
+    position: relative;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ffk-seat__pic .ffk-av {
+    width: 38px;
+    height: 38px;
+    font-size: 14px;
+}
+
+.ffk-seat__dot {
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--ffk-surface);
+    background: #c4c8c0;
+}
+
+.ffk-seat__dot.is-online {
+    background: #22a06b;
+}
+
+.ffk-seat__img {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--ffk-ai);
+    transition: opacity .2s ease;
+}
+
+.ffk-seat__text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+    min-width: 0;
+    flex: 1;
+    transition: opacity .2s ease;
+}
+
+.ffk-seat__name {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.ffk-seat__meta {
+    font-size: 12px;
+    color: var(--ffk-muted);
+}
+
+.ffk-switch {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.ffk-switch__track {
+    width: 34px;
+    height: 20px;
+    border-radius: 999px;
+    background: #c4c8c0;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    transition: background .2s ease;
+}
+
+.ffk-switch__knob {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform .2s ease;
+}
+
+.ffk-switch[aria-pressed="true"] .ffk-switch__track {
+    background: var(--ffk-human);
+}
+
+.ffk-switch[aria-pressed="true"] .ffk-switch__knob {
+    transform: translateX(14px);
+}
+
+.ffk-ai-chip {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    border: 1px solid currentColor;
+    border-radius: 5px;
+    padding: 0 5px;
+    line-height: 16px;
+    opacity: .85;
+    vertical-align: 1px;
+}
+
+/* "more" on a long reply, choice of the agent in the reply form. */
+.ffk-more-link {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Choice of agents: several can answer at once. */
+.ffk-inline {
+    flex-wrap: wrap;
+}
+
+.ffk-agentpick {
+    flex: 1 0 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.ffk-glass--council .ffk-askrow input,
+.ffk-glass--council .ffk-askrow textarea {
+    padding-left: 10px;
+}
+
+.ffk-glass--council .ffk-agentpick {
+    padding: 2px 2px 8px;
+    gap: 5px;
+}
+
+.ffk-glass--council .ffk-pick {
+    font-size: 12px;
+    padding: 2px 10px 2px 2px;
+    gap: 6px;
+}
+
+.ffk-glass--council .ffk-pick img {
+    width: 22px;
+    height: 22px;
+}
+
+.ffk-glass--council .ffk-private {
+    padding-left: 10px;
+}
+
+.ffk-pick {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    border: 1px solid var(--ffk-glass-line);
+    background: rgba(255, 255, 255, .1);
+    color: rgba(255, 255, 255, .8);
+    border-radius: 999px;
+    padding: 3px 12px 3px 3px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+.ffk-pick img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px transparent;
+    filter: grayscale(1);
+    opacity: .7;
+    transition: filter .2s, opacity .2s;
+}
+
+.ffk-pick__tick {
+    display: none;
+}
+
+.ffk-pick[aria-pressed="true"] {
+    background: #fff;
+    border-color: #fff;
+    color: var(--ffk-ink);
+}
+
+.ffk-pick[aria-pressed="true"] img {
+    filter: none;
+    opacity: 1;
+    box-shadow: 0 0 0 2px var(--agent);
+}
+
+.ffk-pick[aria-pressed="true"] .ffk-pick__tick {
+    display: block;
+    color: var(--agent);
+}
+
+.ffk-pick:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* A heart for one reply. */
+.ffk-note {
+    position: relative;
+}
+
+.ffk-heart {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    border: 0;
+    border-radius: 999px;
+    padding: 3px 7px;
+    min-height: 26px;
+    background: transparent;
+    color: rgba(255, 255, 255, .75);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ffk-heart:hover {
+    background: rgba(255, 255, 255, .14);
+    color: #fff;
+}
+
+.ffk-heart.is-on {
+    color: #ff6b81;
+}
+
+.ffk-heart.is-on svg path {
+    fill: currentColor;
+}
+
+/* An agent's reply on a card. */
+.ffk-av--agent {
+    object-fit: cover;
+    border: 2px solid var(--ffk-ai);
+}
+
+.ffk-note--agent {
+    background: rgba(16, 24, 38, .66);
+}
+
+.ffk-note--thinking {
+    opacity: .8;
+    font-style: italic;
+}
+
+.ffk-ic--council {
+    background: rgba(12, 127, 108, .8);
+}
+
+.ffk-ic--council:hover {
+    background: rgba(12, 127, 108, .95);
+}
+
+.ffk-ic__label {
+    white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+    .ffk-hero {
+        min-height: 460px;
+        border-radius: 24px;
+    }
+
+    .ffk-chips,
+    .ffk-convo,
+    .ffk-private {
+        padding-left: 0;
+    }
+
+    .ffk-path {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ffk-share {
+        max-width: none;
+        margin-left: 0;
+    }
+
+    .ffk-stepnav__item {
+        max-width: 100%;
+    }
+
+    .ffk-stepnav {
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ffk *,
+    .ffk *::before,
+    .ffk *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ------------------------------------------------------------------
+   Bright looks (course setting "Look of the conversations"): light, calm, clear.
+   White cards and black text; the looks differ in how much of the photo shows.
+   ------------------------------------------------------------------ */
+.ffk--bright .ffk-card {
+    background: var(--ffk-surface);
+    color: var(--ffk-ink);
+    border: 1px solid var(--ffk-line);
+    box-shadow: 0 1px 2px rgba(16, 24, 38, .04), 0 8px 24px -16px rgba(16, 24, 38, .18);
+    min-height: 240px;
+}
+
+.ffk--bright .ffk-card__img,
+.ffk--bright .ffk-card--tall .ffk-card__img,
+.ffk--bright .ffk-card--wide .ffk-card__img,
+.ffk--bright .ffk-card--square .ffk-card__img {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    min-height: 0;
+    opacity: .62;
+    filter: saturate(.8) brightness(1.08);
+}
+
+.ffk--bright .ffk-card:has(.ffk-card__notes:not(:empty)) .ffk-card__img,
+.ffk--bright .ffk-card:has(.ffk-inline:not([hidden])) .ffk-card__img {
+    min-height: 0;
+}
+
+.ffk--bright .ffk-card::before,
+.ffk--bright .ffk-card--fredki::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, .2) 0%, rgba(255, 255, 255, .62) 45%, rgba(255, 255, 255, .86) 100%);
+}
+
+.ffk--bright .ffk-card--fredki {
+    box-shadow: 0 0 0 1px rgba(79, 107, 255, .45), 0 8px 24px -16px rgba(16, 24, 38, .18);
+}
+
+.ffk--bright .ffk-card__body {
+    align-self: end;
+    padding: 18px;
+    padding-top: 64px;
+    gap: 12px;
+}
+
+.ffk--bright .ffk-who {
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-card__say,
+.ffk--bright a.ffk-card__say:hover {
+    color: var(--ffk-ink);
+}
+
+.ffk--bright .ffk-card__say {
+    font-size: 19px;
+}
+
+.ffk--bright .ffk-card__say--big {
+    font-size: 24px;
+}
+
+.ffk--bright .ffk-type--question { background: #fbe4d3; color: #7a3a0c; }
+.ffk--bright .ffk-type--idea { background: #fbf0c8; color: #6a5208; }
+.ffk--bright .ffk-type--experience { background: #d6f2ea; color: #0a5e50; }
+
+.ffk--bright .ffk-badge {
+    background: #e6eaff;
+    color: var(--ffk-ai-deep);
+}
+
+.ffk--bright .ffk-note,
+.ffk--bright .ffk-note--agent {
+    background: rgba(255, 255, 255, .82);
+    border: 1px solid rgba(16, 24, 38, .07);
+    color: var(--ffk-ink);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.ffk--bright .ffk-note--ai {
+    background: rgba(240, 243, 255, .92);
+    border-color: rgba(79, 107, 255, .2);
+}
+
+.ffk--bright .ffk-note--thinking {
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-ai-chip {
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-more-link {
+    color: var(--ffk-ink);
+}
+
+.ffk--bright .ffk-heart {
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-heart:hover {
+    background: rgba(16, 24, 38, .06);
+    color: var(--ffk-ink);
+}
+
+.ffk--bright .ffk-heart.is-on {
+    color: #e0344f;
+}
+
+.ffk--bright .ffk-ic {
+    background: rgba(16, 24, 38, .05);
+    color: var(--ffk-ink);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.ffk--bright .ffk-ic:hover {
+    background: rgba(16, 24, 38, .1);
+}
+
+.ffk--bright .ffk-ic.is-on {
+    background: #e0344f;
+    color: #fff;
+}
+
+.ffk--bright .ffk-ic--council {
+    background: var(--ffk-human);
+    color: #fff;
+}
+
+.ffk--bright .ffk-ic--council:hover {
+    background: #0a6b5b;
+}
+
+.ffk--bright .ffk-ic--ai {
+    background: var(--ffk-ai);
+    color: #fff;
+}
+
+.ffk--bright .ffk-ic--solid {
+    background: var(--ffk-ink);
+    color: #fff;
+}
+
+.ffk--bright .ffk-card .ffk-inline input,
+.ffk--bright .ffk-card .ffk-inline textarea {
+    background: #fff;
+    border-color: var(--ffk-line);
+    color: var(--ffk-ink);
+}
+
+.ffk--bright .ffk-card .ffk-inline input::placeholder,
+.ffk--bright .ffk-card .ffk-inline textarea::placeholder {
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-card .ffk-pick {
+    background: #fff;
+    border-color: var(--ffk-line);
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-card .ffk-pick[aria-pressed="true"] {
+    border-color: var(--agent);
+    color: var(--ffk-ink);
+}
+
+.ffk--bright .ffk-card .ffk-pick:focus-visible {
+    outline-color: var(--ffk-ink);
+}
+
+.ffk--bright .ffk-kicker {
+    color: var(--ffk-ink);
+}
+
+/* Calm: the photo only as a soft shimmer. */
+.ffk--calm .ffk-card {
+    min-height: 200px;
+}
+
+.ffk--calm .ffk-card .ffk-card__img {
+    opacity: .16;
+    filter: saturate(.6) brightness(1.15);
+}
+
+.ffk--calm .ffk-card::before,
+.ffk--calm .ffk-card--fredki::before {
+    background: linear-gradient(180deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .6) 70%, rgba(255, 255, 255, .85));
+}
+
+.ffk--calm .ffk-card__body,
+.ffk--clear .ffk-card__body {
+    align-self: stretch;
+    padding-top: 18px;
+}
+
+/* Clear: no photos, a thin colour line for the kind of post. */
+.ffk--clear .ffk-card {
+    min-height: 0;
+    border-top: 4px solid #d5dae3;
+}
+
+.ffk--clear .ffk-card[data-type="question"] { border-top-color: #f0a06a; }
+.ffk--clear .ffk-card[data-type="idea"] { border-top-color: #f2c94c; }
+.ffk--clear .ffk-card[data-type="experience"] { border-top-color: #5bc7b0; }
+.ffk--clear .ffk-card--fredki { border-top-color: var(--ffk-ai); }
+
+.ffk--clear .ffk-card .ffk-card__img,
+.ffk--clear .ffk-card::before {
+    display: none;
+}
+
+.ffk--clear .ffk-note,
+.ffk--clear .ffk-note--agent {
+    background: var(--ffk-bg);
+    border-color: transparent;
+}
+
+.ffk--clear .ffk-note--ai {
+    background: #f0f3ff;
+}
+
+/* 0.4.0: the people of the course in the row at the top. */
+.ffk-top {
+    justify-content: space-between;
+    padding-block: 2px 14px;
+    min-height: 0;
+}
+
+.ffk-top:not(:has(*)) {
+    display: none;
+}
+
+.ffk-people {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.ffk-people__count {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ffk-muted);
+    white-space: nowrap;
+}
+
+.ffk-people__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ffk-person {
+    position: relative;
+}
+
+.ffk-person__face {
+    list-style: none;
+    position: relative;
+    display: block;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.ffk-person__face::-webkit-details-marker {
+    display: none;
+}
+
+.ffk-person__face .ffk-av {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+    transition: transform .15s;
+}
+
+.ffk-person__face:hover .ffk-av,
+.ffk-person[open] .ffk-person__face .ffk-av {
+    transform: translateY(-2px);
+    box-shadow: 0 0 0 2px var(--ffk-surface), 0 0 0 4px var(--ffk-line);
+}
+
+.ffk-person__face:focus-visible {
+    outline: 3px solid var(--ffk-ai);
+    outline-offset: 2px;
+}
+
+.ffk-person__face .ffk-seat__dot {
+    right: -1px;
+    bottom: -1px;
+}
+
+.ffk-person:not(:has(.is-online)) .ffk-av {
+    opacity: .7;
+}
+
+.ffk-person__card {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 8px);
+    left: -6px;
+    min-width: 200px;
+    max-width: 260px;
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: 16px;
+    box-shadow: 0 12px 32px -12px rgba(16, 24, 38, .28);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ffk-person__name {
+    font-weight: 700;
+    color: var(--ffk-ink);
+}
+
+.ffk-person__status {
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+.ffk-person__status.is-online {
+    color: #138a5a;
+}
+
+.ffk-person__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.ffk-person__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ffk-ink);
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ffk-person__btn:hover {
+    color: #fff;
+    background: #26324a;
+    text-decoration: none;
+}
+
+.ffk-person__link {
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+.ffk-people__more {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px dashed #c4cad4;
+    color: var(--ffk-muted);
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.ffk-top__edit {
+    color: var(--ffk-ink);
+    border: 1px solid var(--ffk-line);
+    background: var(--ffk-surface);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    margin-left: auto;
+}
+
+.ffk-council__title .ffk-ai-chip {
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.ffk-person__face .ffk-seat__dot {
+    border-color: var(--ffk-bg);
+}
+
+/* ------------------------------------------------------------------
+   0.5.0: the whole conversation on the course page, more conversations, search, one more view.
+   ------------------------------------------------------------------ */
+.ffk-card__say[data-action="open"] {
+    cursor: pointer;
+}
+
+html.ffk-noscroll {
+    overflow: hidden;
+}
+
+.ffk-dialog {
+    border: none;
+    padding: 0;
+    background: transparent;
+    width: min(760px, calc(100vw - 24px));
+    max-width: none;
+    max-height: calc(100dvh - 32px);
+    margin: auto;
+    overflow: visible;
+}
+
+.ffk-dialog::backdrop {
+    background: rgba(16, 24, 38, .45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.ffk-dialog[open] {
+    animation: ffk-pop .3s ease both;
+}
+
+.ffk-conv {
+    position: relative;
+    background: var(--ffk-surface, #fff);
+    color: var(--ffk-ink, #101826);
+    border-radius: 26px;
+    overflow: hidden;
+    max-height: calc(100dvh - 32px);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 80px -30px rgba(16, 24, 38, .5);
+    font-family: var(--ffk-body);
+}
+
+.ffk-conv--loading {
+    padding: 40px;
+    align-items: center;
+    color: var(--ffk-muted);
+}
+
+.ffk-conv__band {
+    flex: 0 0 auto;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+    -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent);
+    mask-image: linear-gradient(180deg, #000 30%, transparent);
+    opacity: .85;
+}
+
+.ffk-conv__close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, .9);
+    color: var(--ffk-ink);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 14px -6px rgba(16, 24, 38, .4);
+    z-index: 2;
+}
+
+.ffk-conv__close:hover {
+    background: #fff;
+}
+
+.ffk-conv__in {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 0 28px 24px;
+    margin-top: -36px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.ffk-conv .ffk-who {
+    color: var(--ffk-muted);
+}
+
+.ffk-conv__title {
+    font-family: var(--ffk-display);
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.2;
+    letter-spacing: -.01em;
+    margin: 0;
+    text-wrap: balance;
+    outline: none;
+}
+
+.ffk-conv__text {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.55;
+    color: #2b3647;
+    max-width: 65ch;
+    white-space: pre-line;
+}
+
+.ffk-conv__count {
+    align-self: center;
+    font-size: 13px;
+    color: var(--ffk-muted);
+    margin-left: 6px;
+}
+
+.ffk-conv__notes {
+    gap: 8px;
+    padding-top: 6px;
+    border-top: 1px solid var(--ffk-line);
+}
+
+.ffk-conv .ffk-note,
+.ffk-conv .ffk-note--agent {
+    background: #f5f6f8;
+    border: 1px solid transparent;
+    color: var(--ffk-ink);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    font-size: 15px;
+    line-height: 1.5;
+    padding: 11px 13px;
+}
+
+.ffk-conv .ffk-note--ai {
+    background: #f0f3ff;
+    border-color: rgba(79, 107, 255, .18);
+}
+
+.ffk-conv .ffk-note--thinking,
+.ffk-conv .ffk-ai-chip,
+.ffk-conv .ffk-heart {
+    color: var(--ffk-muted);
+}
+
+.ffk-conv .ffk-heart:hover {
+    background: rgba(16, 24, 38, .06);
+    color: var(--ffk-ink);
+}
+
+.ffk-conv .ffk-heart.is-on {
+    color: #e0344f;
+}
+
+.ffk-conv .ffk-more-link {
+    color: var(--ffk-ink);
+}
+
+.ffk-conv .ffk-ic {
+    background: rgba(16, 24, 38, .05);
+    color: var(--ffk-ink);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.ffk-conv .ffk-ic:hover {
+    background: rgba(16, 24, 38, .1);
+}
+
+.ffk-conv .ffk-ic.is-on {
+    background: #e0344f;
+    color: #fff;
+}
+
+.ffk-conv .ffk-ic--council {
+    background: var(--ffk-human);
+    color: #fff;
+}
+
+.ffk-conv .ffk-ic--council:hover {
+    background: #0a6b5b;
+}
+
+.ffk-conv .ffk-ic--solid {
+    background: var(--ffk-ink);
+    color: #fff;
+}
+
+.ffk-conv__form {
+    position: sticky;
+    bottom: -24px;
+    background: var(--ffk-surface);
+    padding: 12px 0 4px;
+    margin-bottom: -4px;
+    align-items: center;
+}
+
+.ffk-conv .ffk-inline input,
+.ffk-conv .ffk-inline textarea {
+    background: #fff;
+    border: 1px solid var(--ffk-line);
+    color: var(--ffk-ink);
+    font-size: 15px;
+    padding: 10px 16px;
+}
+
+.ffk-conv .ffk-inline input::placeholder,
+.ffk-conv .ffk-inline textarea::placeholder {
+    color: var(--ffk-muted);
+}
+
+.ffk-conv .ffk-pick {
+    background: #fff;
+    border-color: var(--ffk-line);
+    color: var(--ffk-muted);
+}
+
+.ffk-conv .ffk-pick[aria-pressed="true"] {
+    border-color: var(--agent);
+    color: var(--ffk-ink);
+}
+
+.ffk-conv .ffk-type--question { background: #fbe4d3; color: #7a3a0c; }
+.ffk-conv .ffk-type--idea { background: #fbf0c8; color: #6a5208; }
+.ffk-conv .ffk-type--experience { background: #d6f2ea; color: #0a5e50; }
+
+.ffk-conv__forum {
+    align-self: flex-start;
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+/* One more view, on request. */
+.ffk-nextview {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 12px;
+}
+
+.ffk-nextview__label {
+    font-weight: 600;
+    opacity: .85;
+    margin-right: 2px;
+}
+
+.ffk-nextview__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid rgba(255, 255, 255, .45);
+    background: rgba(255, 255, 255, .14);
+    color: inherit;
+    border-radius: 999px;
+    padding: 2px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ffk-nextview__btn img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px var(--agent);
+}
+
+.ffk-nextview__btn:hover {
+    background: rgba(255, 255, 255, .3);
+}
+
+.ffk-nextview__btn:disabled {
+    opacity: .5;
+    cursor: default;
+}
+
+.ffk-card .ffk-nextview__name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.ffk-conv .ffk-nextview__btn,
+.ffk--bright .ffk-nextview__btn {
+    border-color: var(--ffk-line);
+    background: #fff;
+    color: var(--ffk-ink);
+}
+
+.ffk-conv .ffk-nextview__btn {
+    padding-right: 12px;
+}
+
+.ffk-conv .ffk-nextview__btn:hover,
+.ffk--bright .ffk-nextview__btn:hover {
+    border-color: var(--agent);
+}
+
+.ffk-conv .ffk-nextview__label,
+.ffk--bright .ffk-nextview__label {
+    color: var(--ffk-muted);
+}
+
+/* Search and more conversations. */
+.ffk-search {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid var(--ffk-line);
+    background: var(--ffk-surface);
+    border-radius: 999px;
+    padding: 0 12px;
+    color: var(--ffk-muted);
+    min-width: 0;
+    flex: 0 1 260px;
+}
+
+.ffk-search input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 13px;
+    padding: 6px 0;
+    min-width: 0;
+    width: 100%;
+    color: var(--ffk-ink);
+}
+
+.ffk-search:focus-within {
+    border-color: var(--ffk-ink);
+}
+
+.ffk-wallfoot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0 10px;
+}
+
+.ffk-loadmore {
+    border: 1px solid var(--ffk-line);
+    background: var(--ffk-surface);
+    color: var(--ffk-ink);
+    border-radius: 999px;
+    padding: 9px 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ffk-loadmore:hover {
+    border-color: var(--ffk-ink);
+}
+
+.ffk-wallfoot .ffk-more {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+@media (max-width: 600px) {
+    .ffk-dialog {
+        width: 100vw;
+        max-height: 100dvh;
+        margin: auto 0 0;
+    }
+
+    .ffk-conv {
+        border-radius: 22px 22px 0 0;
+        max-height: 94dvh;
+    }
+
+    .ffk-conv__in {
+        padding: 0 18px 18px;
+    }
+
+    .ffk-conv__title {
+        font-size: 22px;
+    }
+
+    .ffk-search {
+        margin-left: 0;
+        flex-basis: 100%;
+    }
+}
+
+.ffk-conv__title:focus,
+.ffk-conv__title:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+/* 0.5.1: answer single posts; "Reply to …" first, "Ask AI" quieter. */
+.ffk-note__tools {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.ffk-note__tools .ffk-heart {
+    align-self: auto;
+}
+
+.ffk-note__answer {
+    border: none;
+    background: transparent;
+    color: var(--ffk-muted);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.ffk-note__answer:hover {
+    background: rgba(16, 24, 38, .06);
+    color: var(--ffk-ink);
+}
+
+.ffk-card .ffk-note__answer {
+    display: none;
+}
+
+.ffk-replyto {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ffk-muted);
+    white-space: nowrap;
+}
+
+.ffk-card:not(.ffk--bright *) .ffk-replyto {
+    color: rgba(255, 255, 255, .75);
+}
+
+.ffk-conv .ffk-note.is-target {
+    border-color: var(--ffk-ink);
+    background: #fff;
+}
+
+.ffk-replyhead {
+    flex: 1 0 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ffk-ink);
+    padding-left: 4px;
+}
+
+.ffk-replyhead__reset {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(16, 24, 38, .07);
+    color: var(--ffk-ink);
+    padding: 0;
+}
+
+.ffk-ic--quiet {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .45);
+    font-weight: 500;
+}
+
+.ffk-ic--quiet:hover {
+    background: rgba(255, 255, 255, .14);
+}
+
+.ffk--bright .ffk-ic--quiet,
+.ffk-conv .ffk-ic--quiet {
+    background: transparent;
+    color: var(--ffk-muted);
+    box-shadow: inset 0 0 0 1px var(--ffk-line);
+}
+
+.ffk--bright .ffk-ic--quiet:hover,
+.ffk-conv .ffk-ic--quiet:hover {
+    background: rgba(16, 24, 38, .05);
+    color: var(--ffk-ink);
+}
+
+.ffk-ic--reply {
+    background: rgba(255, 255, 255, .9);
+    color: var(--ffk-ink);
+}
+
+.ffk-ic--reply:hover {
+    background: #fff;
+}
+
+.ffk--bright .ffk-ic--reply {
+    background: var(--ffk-ink);
+    color: #fff;
+}
+
+.ffk--bright .ffk-ic--reply:hover {
+    background: #26324a;
+}
+
+.ffk-card__count {
+    align-self: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, .85);
+    text-decoration: none;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.ffk-card__count:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.ffk--bright .ffk-card__count {
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-card__count:hover {
+    color: var(--ffk-ink);
+}
+
+/* 0.5.4: "Datenschutz & KI". */
+.ffk-privacylink {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 12px;
+    color: var(--ffk-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+}
+
+.ffk-council .ffk-privacylink {
+    align-self: flex-start;
+}
+
+.ffk-privacy__in {
+    margin-top: 0;
+    padding-top: 28px;
+}
+
+.ffk-privacy__text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #2b3647;
+    max-width: 65ch;
+}
+
+.ffk-privacy__text h3,
+.ffk-privacy__text h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 18px 0 6px;
+    color: var(--ffk-ink);
+}
+
+.ffk-privacy__text ul {
+    padding-left: 20px;
+}
+
+/* 0.5.5: with the quiet course page the block drawer always pushes the page aside instead of covering it. */
+@media (min-width: 992px) {
+    body.fredki-immersive #page.drawers.show-drawer-right {
+        margin-right: 315px;
+    }
+
+    body.fredki-immersive #page.drawers .main-inner {
+        max-width: min(1320px, 100%);
+    }
+}
+
+/* Question of the day: large only while it is short; never a wall of text. */
+.ffk-card__say--big {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: clamp(18px, 2.1vw, 24px);
+    line-height: 1.3;
+}
+
+/* Correcting own posts and the short wait before agents answer. */
+.ffk-say-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.ffk-say-row > :first-child {
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.ffk-say-row .ffk-pen {
+    margin-top: 2px;
+}
+
+.ffk-pen,
+.ffk-check {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .16);
+    color: inherit;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background .15s ease, transform .15s ease;
+}
+
+.ffk-note__text .ffk-pen {
+    width: 24px;
+    height: 24px;
+    margin-left: 2px;
+}
+
+.ffk-pen:hover,
+.ffk-pen:focus-visible {
+    background: rgba(255, 255, 255, .3);
+}
+
+.ffk-check {
+    background: #2f9e6b;
+    color: #fff;
+}
+
+.ffk-check:hover,
+.ffk-check:focus-visible {
+    background: #24835a;
+    transform: scale(1.06);
+}
+
+.ffk--bright .ffk-pen,
+.ffk-conv .ffk-pen {
+    background: rgba(16, 24, 38, .07);
+}
+
+.ffk--bright .ffk-pen:hover,
+.ffk-conv .ffk-pen:hover {
+    background: rgba(16, 24, 38, .14);
+}
+
+.ffk-note--pending {
+    align-items: center;
+}
+
+.ffk-note--pending .ffk-av + .ffk-av {
+    margin-left: -10px;
+}
+
+.ffk-pending__text {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.ffk-note--pending [data-region="clock"] {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ffk-pending__tools {
+    flex: 0 0 auto;
+    display: inline-flex;
+    gap: 6px;
+}
+
+.ffk-editdialog {
+    border: 0;
+    border-radius: 18px;
+    padding: 0;
+    width: min(560px, calc(100vw - 32px));
+    background: #fff;
+    color: #1d2330;
+    box-shadow: 0 24px 60px rgba(15, 20, 40, .28);
+}
+
+.ffk-editdialog::backdrop {
+    background: rgba(15, 20, 40, .45);
+}
+
+.ffk-editdialog__in {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+}
+
+.ffk-editdialog__title {
+    font-size: 18px;
+    margin: 0;
+}
+
+.ffk-editdialog textarea {
+    width: 100%;
+    border: 1px solid #cfd5e2;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font: inherit;
+    resize: vertical;
+}
+
+.ffk-editdialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ffk-editdialog__delete {
+    margin-right: auto;
+    border: 0;
+    background: none;
+    padding: 6px 4px;
+    font: inherit;
+    font-size: 14px;
+    color: #b42318;
+    cursor: pointer;
+}
+
+.ffk-editdialog__delete.is-confirm {
+    background: #b42318;
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-weight: 600;
+}
+
+.ffk-editdialog .ffk-ic {
+    color: #1d2330;
+    background: #eef1f7;
+}
+
+.ffk-editdialog .ffk-ic--reply {
+    background: #3149d6;
+    color: #fff;
+}
+
+
+/* Writing fields grow with the text: one calm line, up to about eight lines, then they scroll. */
+textarea.ffk-grow {
+    display: block;
+    resize: none;
+    overflow-y: hidden;
+    line-height: 1.4;
+    max-height: 11.5em;
+    field-sizing: content;
+    min-height: 0;
+    font-family: inherit;
+}
+
+textarea.ffk-grow.is-full {
+    overflow-y: auto;
+}
+
+textarea.ffk-grow.is-multi {
+    border-radius: 18px;
+}
+
+.ffk-inline,
+.ffk-askrow {
+    align-items: flex-end;
+}
+
+.ffk-private__link {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    white-space: nowrap;
+}
+
+/* Phone: the share field becomes a calm card – kinds on top, writing field across the full width. */
+@media (max-width: 640px) {
+    .ffk-share {
+        flex-wrap: wrap;
+        align-items: flex-end;
+        border-radius: 22px;
+        padding: 10px 10px 10px 14px;
+        gap: 8px;
+    }
+
+    .ffk-share .ffk-kinds {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+    }
+
+    .ffk-share textarea {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 6px 0;
+    }
+
+    .ffk-share button[type="submit"] {
+        flex: 0 0 auto;
+    }
+}
+
+/* Definitions of the group: a calm strip of terms, and an explanation on hover wherever a term appears. */
+.ffk-terms {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 4px 0 14px;
+}
+
+.ffk-terms__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ffk-muted);
+    margin-right: 2px;
+}
+
+.ffk-terms__chips {
+    display: contents;
+}
+
+.ffk-termchip {
+    border: 1px solid #d9def0;
+    background: #f4f6fd;
+    color: #2a3570;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: help;
+    transition: background .15s ease, border-color .15s ease;
+}
+
+.ffk-termchip:hover,
+.ffk-termchip:focus-visible {
+    background: #e6eafb;
+    border-color: #b8c2ef;
+}
+
+.ffk-termchip.is-new {
+    animation: ffk-pop .5s ease both;
+    border-color: #6f7cf0;
+}
+
+.ffk-terms__all {
+    font-size: 13px;
+    color: var(--ffk-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.ffk-term {
+    text-decoration: underline dotted;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3px;
+    cursor: help;
+    border-radius: 3px;
+}
+
+.ffk-term:hover,
+.ffk-term:focus-visible {
+    background: rgba(111, 124, 240, .14);
+    outline: none;
+}
+
+.ffk-termpop {
+    position: fixed;
+    z-index: 2000;
+    background: #fff;
+    color: #1d2330;
+    border-radius: 14px;
+    padding: 12px 14px;
+    box-shadow: 0 18px 40px rgba(15, 20, 40, .22), 0 0 0 1px rgba(15, 20, 40, .06);
+    font-size: 14px;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity .15s ease, transform .15s ease;
+}
+
+.ffk-termpop.is-open {
+    opacity: 1;
+    transform: none;
+}
+
+.ffk-termpop__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.ffk-termpop p {
+    margin: 0 0 8px;
+}
+
+.ffk-termpop a {
+    font-size: 13px;
+    color: #3149d6;
+}
+
+.ffk-defnote {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 6px 10px;
+    border-radius: 10px;
+    background: rgba(111, 124, 240, .16);
+    font-size: 13px;
+}
+
+/* Calm composer: one line until someone writes more; the strip of terms only when there are terms. */
+.ffk-terms[hidden] {
+    display: none !important;
+}
+
+.ffk-share textarea::placeholder {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ffk-share textarea:placeholder-shown {
+    height: auto;
+    max-height: 2.2em;
+    overflow: hidden;
+}
+
+/* Expert round with learning companion: "FredKI · private" as first choice above the question. */
+.ffk-pick--private .ffk-orb {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+}
+
+.ffk-glass--council .ffk-convo,
+.ffk-glass--council .ffk-chips,
+.ffk-glass--council .ffk-private {
+    padding-left: 4px;
+}
+
+.ffk-glass--council .ffk-chips[hidden],
+.ffk-glass--council .ffk-private[hidden] {
+    display: none !important;
+}
+
+/* ------------------------------------------------------------------
+   0.5.24: tidier cards. Two columns, the question and a preview of the newest answer,
+   a row of faces for who answered, one quiet row of actions.
+   ------------------------------------------------------------------ */
+.ffk-wall,
+.ffk-wall--compact {
+    columns: 2 340px;
+    column-gap: 20px;
+}
+
+.ffk-card {
+    margin-bottom: 20px;
+}
+
+/* Light look: the photo stays on FredKI's question of the day only. */
+.ffk--light .ffk-card:not(.ffk-card--impulse) .ffk-card__img,
+.ffk--light .ffk-card:not(.ffk-card--impulse)::before {
+    display: none;
+}
+
+.ffk--light .ffk-card:not(.ffk-card--impulse) {
+    min-height: 0;
+}
+
+.ffk--bright .ffk-card:not(.ffk-card--impulse) .ffk-card__body {
+    padding-top: 18px;
+}
+
+.ffk--light .ffk-card--impulse .ffk-card__body {
+    padding-top: 96px;
+}
+
+/* The preview: only the newest answer, two lines, no tools. Waiting answers stay visible. */
+.ffk-card__notes--preview > .ffk-note:not(:last-child):not(.ffk-note--pending) {
+    display: none;
+}
+
+.ffk-card__notes--preview .ffk-note:not(.ffk-note--pending):not(.ffk-note--thinking) .ffk-note__text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ffk-card__notes--preview .ffk-note:not(.ffk-note--pending) .ffk-note__tools,
+.ffk-card__notes--preview .ffk-more-link,
+.ffk-card__notes--preview [data-region="full"] {
+    display: none !important;
+}
+
+.ffk-card__notes--preview .ffk-note {
+    cursor: pointer;
+    font-size: 13.5px;
+    line-height: 1.45;
+}
+
+.ffk--bright .ffk-card__notes--preview .ffk-note,
+.ffk--bright .ffk-card__notes--preview .ffk-note--agent {
+    background: var(--ffk-bg, #f5f7fa);
+    border-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+.ffk--bright .ffk-card__notes--preview .ffk-note--ai {
+    background: #f0f3ff;
+}
+
+/* One quiet row: heart, reply, faces with the number of answers, the spark. */
+.ffk-card .ffk-card__actions {
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 2px;
+}
+
+.ffk-card .ffk-card__actions .ffk-ic--quiet {
+    height: 32px;
+    padding: 0 9px;
+    background: transparent;
+}
+
+.ffk--bright .ffk-card .ffk-card__actions .ffk-ic--quiet {
+    color: var(--ffk-muted);
+}
+
+.ffk--bright .ffk-card .ffk-card__actions .ffk-ic--quiet:hover {
+    background: rgba(16, 24, 38, .05);
+    color: var(--ffk-ink);
+}
+
+.ffk-card .ffk-card__actions .ffk-ic.is-on {
+    background: transparent;
+    color: #e0344f;
+}
+
+.ffk-card .ffk-card__actions .ffk-ic--ai:not(.ffk-ic--text) {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+    flex: none;
+}
+
+.ffk-voices {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    padding: 0 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, .85);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.ffk--bright .ffk-voices {
+    color: var(--ffk-muted);
+}
+
+.ffk-voices:hover {
+    text-decoration: underline;
+    color: inherit;
+}
+
+.ffk-voices__faces {
+    display: inline-flex;
+    align-items: center;
+}
+
+.ffk-voices__faces > * {
+    width: 22px;
+    height: 22px;
+    margin-left: -6px;
+    border: 2px solid var(--ffk-surface, #fff);
+    font-size: 9px;
+    box-sizing: content-box;
+}
+
+.ffk-voices__faces > *:first-child {
+    margin-left: 0;
+}
+
+.ffk-voices__faces img {
+    border-radius: 999px;
+    object-fit: cover;
+}
+
+.ffk-voices__more {
+    background: #e8ebf2;
+    color: var(--ffk-ink);
+}
+
+@media (max-width: 720px) {
+    .ffk-wall,
+    .ffk-wall--compact {
+        columns: 1;
+    }
+}
+
+.ffk-card .ffk-card__actions .ffk-ic--quiet,
+.ffk--bright .ffk-card .ffk-card__actions .ffk-ic--quiet {
+    box-shadow: none;
+}
+
+/* ------------------------------------------------------------------
+   0.5.25: an even grid. Cards of one row share their height, FredKI's question spans the row,
+   photos are a calm band of the same size on every card.
+   ------------------------------------------------------------------ */
+.ffk-wall,
+.ffk-wall--compact {
+    columns: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
+
+.ffk-wall > .ffk-card {
+    margin: 0;
+}
+
+.ffk-wall > .ffk-card--impulse {
+    grid-column: 1 / -1;
+}
+
+/* Text sits at the foot of the card; the actions always line up at the bottom. */
+.ffk-card__body {
+    align-self: stretch;
+    justify-content: flex-end;
+}
+
+.ffk--bright .ffk-card:not(.ffk-card--impulse) .ffk-card__body {
+    justify-content: flex-start;
+}
+
+.ffk-card .ffk-card__actions {
+    margin-top: auto;
+}
+
+/* Photo look: the same calm frame on every card instead of tall, wide and square photos. */
+.ffk--image .ffk-card .ffk-card__img,
+.ffk--image .ffk-card--tall .ffk-card__img,
+.ffk--image .ffk-card--wide .ffk-card__img,
+.ffk--image .ffk-card--square .ffk-card__img,
+.ffk--image .ffk-card:has(.ffk-card__notes:not(:empty)) .ffk-card__img {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 320px;
+}
+
+.ffk--image .ffk-card--impulse .ffk-card__img {
+    min-height: 260px;
+}
+
+.ffk--image .ffk-card__body {
+    padding-top: 40px;
+}
+
+.ffk--image .ffk-card::before {
+    background: linear-gradient(180deg, rgba(10, 16, 28, .05) 0%, rgba(10, 16, 28, .45) 45%, rgba(10, 16, 28, .82) 100%);
+}
+
+@media (max-width: 720px) {
+    .ffk-wall,
+    .ffk-wall--compact {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ffk--image .ffk-card .ffk-card__img {
+        min-height: 260px;
+    }
+}
+
+/* Light looks: the text starts at the top, the actions line up at the foot of the row. */
+.ffk--bright .ffk-wall .ffk-card .ffk-card__body {
+    align-self: stretch;
+}
+
+/* Photo look: the photo only fills the card, it never sets its height; text and actions stay together at the foot. */
+.ffk--image .ffk-wall .ffk-card .ffk-card__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+.ffk--image .ffk-wall .ffk-card {
+    min-height: 320px;
+}
+
+.ffk--image .ffk-wall .ffk-card--impulse {
+    min-height: 240px;
+}
+
+.ffk--image .ffk-wall .ffk-card .ffk-card__body {
+    align-self: end;
+}
+
+.ffk--image .ffk-wall .ffk-card .ffk-card__actions {
+    margin-top: 0;
+}
+
+@media (max-width: 720px) {
+    .ffk--image .ffk-wall .ffk-card {
+        min-height: 280px;
+    }
+}
+
+/* ------------------------------------------------------------------
+   0.5.28: definitions of the group as a calm window (no glossary page).
+   ------------------------------------------------------------------ */
+.ffk-defs {
+    height: min(720px, calc(100dvh - 32px));
+}
+
+.ffk-defs__head {
+    flex: 0 0 auto;
+    padding: 28px 72px 12px 28px;
+    border-bottom: 1px solid var(--ffk-line, #e6e9ef);
+}
+
+.ffk-defs__head .ffk-conv__title {
+    margin: 0 0 6px;
+}
+
+.ffk-defs__intro {
+    margin: 0 0 14px;
+    color: var(--ffk-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 60ch;
+}
+
+.ffk-defs__tools {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ffk-defs__search {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 42px;
+    padding: 0 16px;
+    border: 1px solid var(--ffk-line, #d9dee7);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 15px;
+    background: var(--ffk-bg, #f5f7fa);
+    color: var(--ffk-ink);
+}
+
+.ffk-defs__search:focus {
+    outline: 3px solid rgba(79, 95, 240, .35);
+    outline-offset: 1px;
+    background: #fff;
+}
+
+.ffk-defs__count {
+    flex: none;
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+.ffk-defs__az {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 12px;
+}
+
+.ffk-defs__az a {
+    min-width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ffk-ink);
+    text-decoration: none;
+    background: var(--ffk-bg, #f5f7fa);
+}
+
+.ffk-defs__az a:hover,
+.ffk-defs__az a:focus-visible {
+    background: #4f5ff0;
+    color: #fff;
+}
+
+.ffk-defs__in.ffk-defs__in {
+    margin-top: 0;
+    padding-top: 8px;
+    flex: 1 1 auto;
+    display: block;
+}
+
+.ffk-defs__group {
+    scroll-margin-top: 8px;
+}
+
+.ffk-defs__letter {
+    position: sticky;
+    top: 0;
+    margin: 0;
+    padding: 12px 0 6px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    color: #4f5ff0;
+    background: var(--ffk-surface, #fff);
+}
+
+.ffk-defs__group dl {
+    margin: 0;
+}
+
+.ffk-defs__item {
+    padding: 12px 14px;
+    border-radius: 14px;
+}
+
+.ffk-defs__item + .ffk-defs__item {
+    border-top: 1px solid var(--ffk-line, #eef0f4);
+}
+
+.ffk-defs__item.is-focus {
+    background: #f0f3ff;
+    border-color: transparent;
+}
+
+.ffk-defs__item dt {
+    font-weight: 700;
+    font-size: 16px;
+    margin: 0 0 4px;
+}
+
+.ffk-defs__item dd {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ffk-ink);
+    max-width: 65ch;
+}
+
+.ffk-defs__none,
+.ffk-defs__edit {
+    margin: 16px 14px;
+    color: var(--ffk-muted);
+    font-size: 14px;
+}
+
+.ffk-termpop__more {
+    border: 0;
+    padding: 0;
+    background: none;
+    color: #3b4ad6;
+    font: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .ffk-defs__head {
+        padding: 22px 64px 10px 18px;
+    }
+}
+
+/* 0.5.28: accessibility – readable contrast for offline faces and AI labels. */
+.ffk-person:not(:has(.is-online)) .ffk-av {
+    opacity: 1;
+    filter: saturate(.35);
+    box-shadow: inset 0 0 0 1px rgba(16, 24, 38, .12);
+}
+
+.ffk-ai-chip {
+    opacity: 1;
+}
+
+.ffk--bright .ffk-ai-chip,
+.ffk-defs .ffk-ai-chip,
+.ffk-termpop .ffk-ai-chip {
+    color: #4f5866;
+}
+
+/* 0.5.30: one way to ask the AI everywhere – choose who answers, write (optional), send. */
+.ffk-agentpick.is-hint .ffk-pick {
+    box-shadow: 0 0 0 2px rgba(79, 95, 240, .35);
+}
+
+.ffk-pick--fredki[aria-pressed="true"] {
+    background: #eef0ff;
+    border-color: #4f5ff0;
+}
+
+.ffk-agentpick__label {
+    flex: 0 0 100%;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    color: var(--ffk-muted);
+}
+
+.ffk--image .ffk-card .ffk-agentpick__label {
+    color: rgba(255, 255, 255, .8);
+}
+
+/* 0.5.31: the group is the heart of the course – only the share field, on a calm photo like the question to FredKI. */
+.ffk-groupstage {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    margin-top: 28px;
+    margin-bottom: 18px;
+    padding: 38px 32px;
+    border-radius: 28px;
+    background: #1d2433;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.ffk-groupstage__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 70%;
+    filter: saturate(.9);
+}
+
+.ffk-groupstage::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(180deg, rgba(14, 20, 34, .25) 0%, rgba(14, 20, 34, .55) 100%);
+}
+
+.ffk .ffk-groupstage .ffk-share {
+    flex: 0 0 auto;
+    max-width: none;
+    margin: 0;
+    min-height: 64px;
+    padding: 8px 8px 8px 20px;
+    border: 1px solid rgba(255, 255, 255, .55);
+    background: rgba(255, 255, 255, .94);
+    box-shadow: 0 14px 36px rgba(8, 12, 24, .28);
+}
+
+.ffk-groupstage .ffk-share textarea {
+    font-size: 16.5px;
+}
+
+.ffk-groupstage .ffk-share:focus-within {
+    box-shadow: 0 14px 36px rgba(8, 12, 24, .28), 0 0 0 3px rgba(255, 255, 255, .7);
+}
+
+@media (max-width: 600px) {
+    .ffk-groupstage {
+        padding: 22px 14px;
+        border-radius: 22px;
+    }
+}
+
+.ffk .ffk-groupstage .ffk-share {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.ffk-groupstage .ffk-share textarea {
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    .ffk .ffk-groupstage .ffk-share {
+        padding: 10px 10px 10px 14px;
+    }
+}
+
+/* ------------------------------------------------------------------
+   0.5.33: maturity of the discussion – a calm gauge, never per person.
+   ------------------------------------------------------------------ */
+.ffk-maturity {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 0 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ffk-muted);
+}
+
+.ffk--image .ffk-card .ffk-maturity {
+    color: rgba(255, 255, 255, .88);
+}
+
+.ffk-maturity__steps {
+    display: inline-flex;
+    gap: 3px;
+}
+
+.ffk-maturity__steps i {
+    width: 14px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(120, 130, 150, .3);
+}
+
+.ffk--image .ffk-card .ffk-maturity__steps i {
+    background: rgba(255, 255, 255, .28);
+}
+
+.ffk-maturity__steps i.is-on {
+    background: var(--ffk-mat, #4f5ff0);
+}
+
+.ffk-maturity--start,
+.ffk-matpanel--start,
+.ffk-gauge--start {
+    --ffk-mat: #e0a12c;
+}
+
+.ffk-maturity--exchange,
+.ffk-matpanel--exchange,
+.ffk-gauge--exchange {
+    --ffk-mat: #3b8fd9;
+}
+
+.ffk-maturity--deepening,
+.ffk-matpanel--deepening,
+.ffk-gauge--deepening {
+    --ffk-mat: #4f5ff0;
+}
+
+.ffk-maturity--developed,
+.ffk-matpanel--developed,
+.ffk-gauge--developed {
+    --ffk-mat: #12866b;
+}
+
+.ffk-gauge {
+    width: 96px;
+    height: auto;
+    flex: none;
+}
+
+.ffk-gauge__track,
+.ffk-gauge__fill {
+    fill: none;
+    stroke-width: 11;
+    stroke-linecap: round;
+}
+
+.ffk-gauge__track {
+    stroke: #e6e9f0;
+}
+
+.ffk-gauge__fill {
+    stroke: var(--ffk-mat, #4f5ff0);
+}
+
+.ffk-gauge__needle path {
+    stroke: #1d2330;
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.ffk-gauge__needle circle {
+    fill: #1d2330;
+}
+
+.ffk-matpanel {
+    margin: 4px 0 14px;
+    padding: 16px 18px;
+    border-radius: 18px;
+    background: var(--ffk-bg, #f5f7fa);
+}
+
+.ffk-matpanel__gauge {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.ffk-matpanel__kicker {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--ffk-muted);
+}
+
+.ffk-matpanel__level {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ffk-ink);
+}
+
+.ffk-matpanel__aspects {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 6px 18px;
+}
+
+.ffk-matpanel__aspects li {
+    display: grid;
+    grid-template-columns: 1fr 90px;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--ffk-ink);
+}
+
+.ffk-matpanel__bar {
+    height: 6px;
+    border-radius: 3px;
+    background: #e3e7ef;
+    overflow: hidden;
+}
+
+.ffk-matpanel__bar i {
+    display: block;
+    height: 100%;
+    background: var(--ffk-mat, #4f5ff0);
+}
+
+.ffk-matpanel__hint {
+    margin: 12px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.ffk-matpanel__note,
+.ffk-coursemat__note {
+    margin: 8px 0 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--ffk-muted);
+}
+
+.ffk-coursemat {
+    margin-bottom: 16px;
+}
+
+.ffk-coursemat__title {
+    margin: 0 0 10px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.ffk-coursemat__row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.ffk-coursemat__level {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.ffk-coursemat__meta {
+    font-size: 13px;
+    color: var(--ffk-muted);
+}
+
+.ffk-coursemat__link {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.ffk .ffk-maturity__steps i.is-on {
+    background: var(--ffk-mat, #4f5ff0);
+}
+
+.ffk--image .ffk-card .ffk-maturity--start,
+.ffk--image .ffk-card .ffk-maturity--exchange {
+    --ffk-mat: #ffd27a;
+}
+
+.ffk--image .ffk-card .ffk-maturity--deepening {
+    --ffk-mat: #aab4ff;
+}
+
+.ffk--image .ffk-card .ffk-maturity--developed {
+    --ffk-mat: #7fe0c2;
+}
+
+/* 0.5.34: the share field stands on its own, without a photo behind it. */
+.ffk .ffk-groupstage {
+    padding: 0;
+    background: none;
+    overflow: visible;
+    border-radius: 0;
+}
+
+.ffk .ffk-groupstage::before {
+    content: none;
+}
+
+.ffk .ffk-groupstage .ffk-share {
+    background: #fff;
+    border: 1px solid var(--ffk-line, #e2e6ee);
+    box-shadow: 0 10px 30px rgba(30, 40, 90, .10);
+}
+
+/* 0.5.35: FredKI's ring sits inside the card, so cards, share field and filters share one left and right edge. */
+.ffk .ffk-card--fredki,
+.ffk--bright .ffk-card--fredki {
+    box-shadow: none;
+}
+
+.ffk .ffk-card--fredki::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 2px rgba(79, 107, 255, .55);
+    pointer-events: none;
+}
+
+.ffk--bright .ffk-card--fredki::after {
+    box-shadow: inset 0 0 0 1px rgba(79, 107, 255, .45);
+}
+
+.ffk .ffk-groupstage {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* ------------------------------------------------------------------
+   0.5.37: topic fields. Shelves bundle the conversations by theme; chips choose one topic field;
+   the view switches between topics, cards and a calm list.
+   ------------------------------------------------------------------ */
+.ffk-views {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--ffk-line);
+    border-radius: 999px;
+    background: var(--ffk-surface);
+    flex: 0 0 auto;
+}
+
+.ffk-viewbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--ffk-muted);
+    border-radius: 999px;
+    padding: 4px 11px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.ffk-viewbtn:hover {
+    color: var(--ffk-ink);
+}
+
+.ffk-viewbtn.is-active {
+    background: var(--ffk-ink);
+    color: #fff;
+}
+
+.ffk-topics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: -4px 0 18px;
+}
+
+.ffk-topicchip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid transparent;
+    background: rgba(79, 107, 255, .08);
+    color: var(--ffk-ai-deep);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    max-width: 100%;
+}
+
+.ffk-topicchip:hover {
+    border-color: rgba(79, 107, 255, .35);
+}
+
+.ffk-topicchip.is-active {
+    background: var(--ffk-ai-deep);
+    color: #fff;
+}
+
+.ffk-topicchip--without:not(.is-active) {
+    background: transparent;
+    border-color: var(--ffk-line);
+    color: var(--ffk-muted);
+}
+
+.ffk-topicchip__n {
+    font-weight: 500;
+    opacity: .75;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Topics view: shelves instead of the wall. Only the question of the day and just shared conversations stay above. */
+.ffk-round:not(.ffk-round--topics) [data-region="shelves"],
+.ffk-round.is-filtered [data-region="shelves"] {
+    display: none;
+}
+
+.ffk-round--topics:not(.is-filtered) [data-region="wall"] > .ffk-card:not(.ffk-card--impulse):not(.is-fresh),
+.ffk-round--topics:not(.is-filtered) .ffk-loadmore {
+    display: none;
+}
+
+.ffk-round--topics:not(.is-filtered) [data-region="wall"]:not(:has(> :not([hidden]):is(.ffk-card--impulse, .is-fresh, [data-region="impulse"]))) {
+    display: none;
+}
+
+.ffk-round--topics:not(.is-filtered) [data-region="wall"] {
+    margin-bottom: 28px;
+}
+
+.ffk-shelves {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.ffk-shelf:not(:has([data-region="tile"]:not([hidden]))) {
+    display: none;
+}
+
+.ffk-shelf__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--ffk-line);
+}
+
+.ffk .ffk-shelf__name {
+    font-family: var(--ffk-display);
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin: 0;
+    color: var(--ffk-ink);
+}
+
+.ffk-shelf--without .ffk-shelf__name {
+    color: var(--ffk-muted);
+}
+
+.ffk-shelf__count {
+    color: var(--ffk-muted);
+    font-size: 13px;
+}
+
+.ffk-shelf__head .ffk-maturity {
+    margin: 0;
+    align-self: center;
+}
+
+.ffk-shelf__all {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    background: none;
+    padding: 2px 0;
+    color: var(--ffk-ai-deep);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ffk-shelf__all:hover {
+    text-decoration: underline;
+}
+
+.ffk-shelf__tiles {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ffk-tile {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px;
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: 16px;
+    min-width: 0;
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.ffk-tile:hover,
+.ffk-tile:focus-within {
+    border-color: rgba(79, 107, 255, .4);
+    box-shadow: 0 8px 22px -16px rgba(16, 24, 38, .35);
+}
+
+.ffk-tile[hidden] {
+    display: none;
+}
+
+.ffk .ffk-tile__img {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.ffk-tile__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.ffk .ffk-tile__say {
+    color: var(--ffk-ink);
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.35;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* The whole tile opens the conversation. */
+.ffk .ffk-tile__say::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+}
+
+.ffk .ffk-tile__say:focus-visible {
+    outline: none;
+}
+
+.ffk .ffk-tile__say:focus-visible::after {
+    outline: 2px solid var(--ffk-ai);
+    outline-offset: 2px;
+}
+
+.ffk-tile__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    color: var(--ffk-muted);
+    font-size: 12.5px;
+}
+
+.ffk-tile__meta .ffk-voices__faces .ffk-av,
+.ffk-tile__meta .ffk-voices__faces .ffk-orb {
+    width: 20px;
+    height: 20px;
+    font-size: 9px;
+}
+
+.ffk-tile__n {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-variant-numeric: tabular-nums;
+}
+
+.ffk-tile__meta .ffk-maturity {
+    margin: 0;
+    padding: 0;
+    background: none;
+}
+
+/* Topic field on a card. */
+.ffk-topicline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 0;
+}
+
+.ffk-topicline:empty {
+    display: none;
+}
+
+.ffk-topictag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(79, 107, 255, .1);
+    color: var(--ffk-ai-deep);
+    position: relative;
+    z-index: 2;
+}
+
+.ffk-topictag--sorting {
+    background: transparent;
+    color: inherit;
+    opacity: .85;
+    font-weight: 500;
+}
+
+.ffk-topicedit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: 1px dashed currentColor;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    opacity: .7;
+    padding: 2px 8px;
+    font-size: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.ffk-topicedit:has(.sr-only) {
+    border-style: solid;
+    border-color: transparent;
+    padding: 3px;
+}
+
+.ffk-topicedit:hover,
+.ffk-topicedit:focus-visible,
+.ffk-topicedit[aria-expanded="true"] {
+    opacity: 1;
+}
+
+.ffk--image .ffk-card .ffk-topictag {
+    background: rgba(255, 255, 255, .2);
+    color: #fff;
+    backdrop-filter: blur(6px);
+}
+
+.ffk--image .ffk-card .ffk-topicedit {
+    color: #fff;
+}
+
+/* Menu to choose the topic field. */
+.ffk-topicmenu {
+    position: fixed;
+    z-index: 1100;
+    width: 260px;
+    max-width: calc(100vw - 16px);
+    background: #fff;
+    color: #101826;
+    border: 1px solid #e3e6ec;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px -18px rgba(16, 24, 38, .45);
+    padding: 8px;
+    font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 14px;
+}
+
+.ffk-topicmenu__list {
+    display: flex;
+    flex-direction: column;
+    max-height: 220px;
+    overflow-y: auto;
+}
+
+.ffk-topicmenu__item,
+.ffk-topicmenu__suggest {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    text-align: left;
+    border: 0;
+    background: none;
+    color: inherit;
+    border-radius: 10px;
+    padding: 7px 10px;
+}
+
+.ffk-topicmenu__item:hover,
+.ffk-topicmenu__item:focus-visible,
+.ffk-topicmenu__suggest:hover,
+.ffk-topicmenu__suggest:focus-visible {
+    background: #f1f3f8;
+}
+
+.ffk-topicmenu__item.is-on {
+    font-weight: 700;
+    color: #2234a8;
+}
+
+.ffk-topicmenu__item.is-on::after {
+    content: "✓";
+    margin-left: auto;
+}
+
+.ffk-topicmenu__item--none {
+    color: #5e6878;
+}
+
+.ffk-topicmenu__new {
+    display: flex;
+    gap: 6px;
+    padding: 8px 2px 4px;
+    margin-top: 6px;
+    border-top: 1px solid #e3e6ec;
+}
+
+.ffk-topicmenu__new input {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 1px solid #d5dae3;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 14px;
+}
+
+.ffk-topicmenu__new button {
+    border: 0;
+    border-radius: 10px;
+    background: #101826;
+    color: #fff;
+    padding: 6px 12px;
+    font-weight: 600;
+}
+
+.ffk-topicmenu__suggest {
+    color: #2234a8;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* List view: one calm line per conversation. */
+.ffk-round--list [data-region="wall"],
+.ffk-round--list [data-region="results"] {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: var(--ffk-surface);
+    border: 1px solid var(--ffk-line);
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.ffk-round--list [data-region="wall"][hidden],
+.ffk-round--list [data-region="results"][hidden] {
+    display: none;
+}
+
+.ffk .ffk-round--list .ffk-card,
+.ffk .ffk-round--list .ffk-card--impulse {
+    min-height: 0;
+    border: 0;
+    border-bottom: 1px solid var(--ffk-line);
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    color: var(--ffk-ink);
+    margin: 0;
+}
+
+.ffk .ffk-round--list .ffk-card:last-child {
+    border-bottom: 0;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-card__img,
+.ffk .ffk-round--list .ffk-card::before,
+.ffk .ffk-round--list .ffk-card::after,
+.ffk .ffk-round--list .ffk-card .ffk-card__notes--preview,
+.ffk .ffk-round--list .ffk-card .ffk-kicker {
+    display: none;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-card__body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas: "say say actions" "who topic actions" "form form form";
+    align-items: center;
+    gap: 4px 18px;
+    padding: 14px 18px;
+    align-self: stretch;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-say-row {
+    grid-area: say;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-who {
+    grid-area: who;
+    color: var(--ffk-muted);
+    font-size: 12.5px;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-topicline {
+    grid-area: topic;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-card__actions {
+    grid-area: actions;
+    margin: 0;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-maturity {
+    display: none;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-inline {
+    grid-area: form;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-card__say,
+.ffk .ffk-round--list .ffk-card .ffk-card__say--big {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--ffk-ink);
+    background: none;
+    text-shadow: none;
+    padding: 0;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-who *,
+.ffk .ffk-round--list .ffk-card .ffk-card__actions,
+.ffk .ffk-round--list .ffk-card .ffk-card__actions *,
+.ffk .ffk-round--list .ffk-card .ffk-topicedit {
+    color: var(--ffk-muted);
+    text-shadow: none;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-topictag {
+    background: rgba(79, 107, 255, .1);
+    color: var(--ffk-ai-deep);
+    backdrop-filter: none;
+}
+
+.ffk .ffk-round--list .ffk-card:hover {
+    background: #f8f9fb;
+}
+
+@media (max-width: 960px) {
+    .ffk-shelf__tiles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 720px) {
+    .ffk-shelf__tiles {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ffk-topics {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .ffk-topicchip {
+        flex: 0 0 auto;
+    }
+
+    .ffk-viewbtn__label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    .ffk .ffk-round--list .ffk-card .ffk-card__body {
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-areas: "say say" "who topic" "actions actions" "form form";
+    }
+}
+
+.ffk .ffk-topictag,
+.ffk .ffk-topicedit {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.ffk .ffk-round--list .ffk-card .ffk-topicedit,
+.ffk--bright .ffk-topicedit {
+    opacity: 1;
+}
+
+/* Question of the day: two clear buttons, the answer first. */
+.ffk-card--impulse .ffk-card__actions {
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ffk .ffk-card--impulse .ffk-card__actions .ffk-ic--text {
+    height: 38px;
+    padding: 0 16px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.ffk .ffk-card--impulse .ffk-card__actions [data-action="impulse-answer"] {
+    background: #fff;
+    color: #101826;
+}
+
+.ffk .ffk-card--impulse .ffk-card__actions [data-action="impulse-answer"]:hover {
+    background: #eef1f6;
+}
+
+.ffk .ffk-card--impulse .ffk-card__actions .ffk-ic--ai svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+}
+
+/* A card shows a calm section of the photo of its topic field (cards already clip it to their frame). */
+.ffk-tile__pic {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.ffk .ffk-tile__pic .ffk-tile__img {
+    display: block;
+    border-radius: 0;
+}
+
+.ffk-stepnote {
+    margin: -6px 0 14px;
+    color: var(--ffk-muted);
+    font-size: 14px;
+}
+
+.ffk-stepmore {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 0;
+}
+
+.ffk .ffk-stepmore .ffk-pillbtn--ghost {
+    color: var(--ffk-ink);
+    border-color: var(--ffk-line);
+    background: var(--ffk-surface);
+}
+
+/* Learning step: its own conversation large, the course conversations small below. */
+.ffk-stepround {
+    margin-bottom: 40px;
+}
+
+.ffk-stepround .ffk-groupstage {
+    margin-bottom: 18px;
+}
+
+.ffk-coursetiles {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--ffk-line);
+}
+
+.ffk .ffk-h--small {
+    font-size: 18px;
+}
+
+.ffk-coursetiles .ffk-shelves {
+    gap: 22px;
+}
+
+.ffk-coursetiles .ffk-shelf__tiles {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+.ffk-stepadd {
+    color: var(--ffk-muted);
+    font-size: 14px;
+    margin: 0 0 8px;
+}
+
+/* 1.0.1: hint for trainers how FredKI comes into the course. */
+.format-fredki .ffk-aihint,
+.ffk .ffk-aihint {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    margin: 16px auto 0;
+    max-width: 1180px;
+    padding: 12px 16px;
+    border: 1px dashed rgba(0, 124, 144, .45);
+    border-radius: 14px;
+    background: rgba(0, 124, 144, .06);
+    font-size: .95rem;
+}
+.ffk .ffk-aihint p {
+    margin: 0;
+    flex: 1 1 380px;
+    min-width: 0;
+}
+.ffk .ffk-aihint__do {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.ffk .ffk-aihint__go {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: #007c90;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}
+.ffk .ffk-aihint__go:hover,
+.ffk .ffk-aihint__go:focus {
+    background: #00687a;
+    color: #fff;
+}
+.ffk .ffk-aihint__hide {
+    border: 0;
+    background: none;
+    color: inherit;
+    opacity: .75;
+    text-decoration: underline;
+    padding: 6px 4px;
+}

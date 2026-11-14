@@ -1,0 +1,42 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_fredki/impulse
+
+    FredKI's question of the day to the whole group.
+
+    Example context (json):
+    {
+        "hasimpulse": true,
+        "impulse": "Entlastung oder mehr Prüfaufwand?",
+        "impulseimage": "https://example.com/2.jpg",
+        "canpost": true,
+        "hasfredki": true
+    }
+}}
+<article class="ffk-card ffk-card--tall ffk-card--impulse ffk-card--fredki" data-region="impulse" data-type="question" data-byfredki="1">
+    <img class="ffk-card__img" src="{{impulseimage}}" alt="">
+    <div class="ffk-card__body">
+        <div class="ffk-kicker"><span class="ffk-orb ffk-orb--s" aria-hidden="true"></span>{{#str}}fredkiasks, format_fredki{{/str}}</div>
+        <p class="ffk-card__say ffk-card__say--big" data-region="impulsetext">{{#hasimpulse}}{{impulse}}{{/hasimpulse}}{{^hasimpulse}}<span class="ffk-typing" aria-label="{{#str}}thinking, format_fredki{{/str}}"><i></i><i></i><i></i></span>{{/hasimpulse}}</p>
+        <div class="ffk-card__notes" data-region="notes" aria-live="polite"></div>
+        <div class="ffk-card__actions">
+            {{#canpost}}<button type="button" class="ffk-ic ffk-ic--text" data-action="impulse-answer">{{#str}}iwillanswer, format_fredki{{/str}}</button>{{/canpost}}
+            {{#hasfredki}}<button type="button" class="ffk-ic ffk-ic--ai ffk-ic--text" data-action="contrast">{{> format_fredki/spark }}{{#str}}bothsides, format_fredki{{/str}}</button>{{/hasfredki}}
+        </div>
+    </div>
+</article>

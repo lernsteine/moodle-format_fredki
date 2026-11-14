@@ -1,0 +1,44 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_fredki/councilbar
+
+    The question to the expert round on the image. It starts a conversation for the whole group;
+    the chosen agents answer there.
+
+    Example context (json):
+    {
+        "teammode": true
+    }
+}}
+<div class="ffk-glass ffk-glass--council" data-region="councilbar">
+    <div class="ffk-agentpick ffk-agentpick--glass" data-region="agentpick" role="group" aria-label="{{#str}}askcouncilchoose, format_fredki{{/str}}"></div>
+    <form class="ffk-askrow" data-region="councilform">
+        <label class="sr-only" for="ffk-council-input">{{#str}}askcouncilall, format_fredki{{/str}}</label>
+        <textarea id="ffk-council-input" class="ffk-grow" rows="1" autocomplete="off" maxlength="6000" placeholder="{{#str}}askcouncilall, format_fredki{{/str}}"></textarea>
+        <button class="ffk-go" type="submit" aria-label="{{#str}}askbutton, format_fredki{{/str}}">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+    </form>
+    {{#hasfredki}}
+    <div class="ffk-convo" data-region="convo" aria-live="polite"></div>
+    <div class="ffk-chips" data-region="privatechips" hidden>
+        {{#starters}}<button type="button" class="ffk-chip" data-action="starter" data-mode="{{mode}}"{{#personal}} data-personal="1"{{/personal}}>{{label}}</button>{{/starters}}
+    </div>
+    <div class="ffk-private" data-region="privatehint" hidden>{{#str}}privatehint, format_fredki{{/str}}{{#companionmessageurl}} <a class="ffk-private__link" href="{{companionmessageurl}}">{{#str}}companionmessages_history, format_fredki{{/str}}</a>{{/companionmessageurl}}</div>
+    {{/hasfredki}}
+</div>

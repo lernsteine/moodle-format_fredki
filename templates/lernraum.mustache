@@ -1,0 +1,212 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_fredki/lernraum
+
+    The learning space: one large image with a question and FredKI, the path, the group.
+
+    Example context (json):
+    {
+        "courseid": 2,
+        "coursename": "KI im Arbeitsalltag",
+        "courseurl": "#",
+        "question": "Wo hilft dir KI wirklich?",
+        "heroimage": "https://example.com/hero.jpg",
+        "hasherovideo": false,
+        "hasfredki": true,
+        "botname": "FredKI",
+        "starters": [{"label": "Gib mir eine Übung", "mode": "ask"}],
+        "hasstages": true,
+        "stages": [{"num": 1, "name": "Erkunden", "url": "#", "image": "https://example.com/1.jpg", "iscurrent": true}],
+        "hascommunity": true,
+        "canpost": true,
+        "cards": [],
+        "hasimpulse": true,
+        "impulse": "Entlastung oder mehr Prüfaufwand?",
+        "impulseimage": "https://example.com/2.jpg",
+        "people": {"show": false},
+        "council": {"agents": [], "activelabel": "1 aktiv", "canconvene": false},
+        "links": {"items": [], "canedit": false}
+    }
+}}
+<div class="ffk ffk--{{cardstyle}}{{#cardbright}} ffk--bright{{/cardbright}}" data-region="format-fredki" data-courseid="{{courseid}}">
+    {{> format_fredki/topbar }}
+
+    <section class="ffk-hero" aria-labelledby="ffk-question">
+        {{#hasherovideo}}<video class="ffk-hero__media" src="{{herovideo}}" poster="{{heroimage}}" autoplay muted loop playsinline aria-hidden="true"></video>{{/hasherovideo}}
+        {{^hasherovideo}}<img class="ffk-hero__media" src="{{heroimage}}" alt="">{{/hasherovideo}}
+        <div class="ffk-hero__in">
+            <h2 class="ffk-hero__q" id="ffk-question">{{question}}</h2>
+            {{^teammode}}{{> format_fredki/askbar }}{{/teammode}}
+            {{#teammode}}{{> format_fredki/councilbar }}{{/teammode}}
+        </div>
+    </section>
+
+    {{#aihint}}
+    <aside class="ffk-aihint" data-region="aihint" aria-label="{{#str}}aihint_title, format_fredki{{/str}}">
+        <p><strong>{{#str}}aihint_title, format_fredki{{/str}}</strong> {{text}}</p>
+        <div class="ffk-aihint__do">
+            {{#url}}<a class="ffk-aihint__go" href="{{url}}"{{#external}} target="_blank" rel="noopener"{{/external}}>{{label}}</a>{{/url}}
+            <button type="button" class="ffk-aihint__hide" data-action="hideaihint">{{#str}}aihint_hide, format_fredki{{/str}}</button>
+        </div>
+    </aside>
+    {{/aihint}}
+
+    {{#hasstages}}
+    <nav class="ffk-path" aria-label="{{#str}}path, format_fredki{{/str}}">
+        {{#stages}}
+            {{^locked}}<a class="ffk-stage{{#iscurrent}} is-current{{/iscurrent}}{{#complete}} is-complete{{/complete}}" href="{{url}}"{{#iscurrent}} aria-current="step"{{/iscurrent}}>{{/locked}}
+            {{#locked}}<div class="ffk-stage is-locked">{{/locked}}
+                <img src="{{image}}" alt="" loading="lazy">
+                <span class="ffk-stage__name">
+                    {{#locked}}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>{{/locked}}
+                    {{name}}
+                </span>
+                {{#hasprogress}}<span class="ffk-stage__progress">{{done}}/{{total}}</span>{{/hasprogress}}
+            {{^locked}}</a>{{/locked}}{{#locked}}</div>{{/locked}}
+        {{/stages}}
+    </nav>
+    {{/hasstages}}
+
+    {{#hasstartactivities}}
+    <div class="ffk-startacts">
+        {{#startactivities}}
+            {{#isdefinitions}}<a class="ffk-pill" href="{{url}}" data-action="definitions" aria-haspopup="dialog"><img src="{{icon}}" alt="" class="ffk-pill__icon">{{name}}</a>{{/isdefinitions}}
+            {{^isdefinitions}}{{#haslink}}<a class="ffk-pill" href="{{url}}"><img src="{{icon}}" alt="" class="ffk-pill__icon">{{name}}</a>{{/haslink}}{{/isdefinitions}}
+        {{/startactivities}}
+    </div>
+    {{/hasstartactivities}}
+
+    <div class="ffk-cols">
+    <section class="ffk-round ffk-round--{{view}}" id="runde" aria-labelledby="ffk-round-title" data-region="round" data-view="{{view}}">
+        <div class="ffk-bar ffk-groupstage">
+            <h3 class="sr-only" id="ffk-round-title">{{#str}}round, format_fredki{{/str}}</h3>
+            {{#hascommunity}}{{#canpost}}
+            <form class="ffk-share" data-region="composer">
+                <fieldset class="ffk-kinds">
+                    <legend class="sr-only">{{#str}}kind, format_fredki{{/str}}</legend>
+                    {{#types}}
+                    <label class="ffk-kind"><input type="radio" name="ffk-kind" value="{{value}}"{{#checked}} checked{{/checked}}><span>{{label}}</span></label>
+                    {{/types}}
+                </fieldset>
+                <label class="sr-only" for="ffk-share-input">{{#str}}sharewithround, format_fredki{{/str}}</label>
+                <textarea id="ffk-share-input" class="ffk-grow" rows="1" autocomplete="off" maxlength="6000" placeholder="{{#str}}shareplaceholder, format_fredki{{/str}}"{{#hasfredki}} title="{{#str}}shareplaceholder_fredki, format_fredki{{/str}}"{{/hasfredki}}></textarea>
+                <button type="submit">{{#str}}share, format_fredki{{/str}}</button>
+            </form>
+            {{/canpost}}{{/hascommunity}}
+        </div>
+
+        {{#hascommunity}}
+        <div class="ffk-filters" role="group" aria-label="{{#str}}filter, format_fredki{{/str}}">
+            {{#filters}}<button type="button" class="ffk-filter{{#active}} is-active{{/active}}" data-action="filter" data-filter="{{value}}" aria-pressed="{{#active}}true{{/active}}{{^active}}false{{/active}}">{{label}}</button>{{/filters}}
+            <form class="ffk-search" data-region="search" role="search">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+                <label class="sr-only" for="ffk-search-{{courseid}}">{{#str}}searchconversations, format_fredki{{/str}}</label>
+                <input id="ffk-search-{{courseid}}" type="search" autocomplete="off" maxlength="100" placeholder="{{#str}}searchconversations, format_fredki{{/str}}">
+            </form>
+            <div class="ffk-views" role="group" aria-label="{{#str}}view, format_fredki{{/str}}">
+                {{#views}}<button type="button" class="ffk-viewbtn{{#active}} is-active{{/active}}" data-action="view" data-view="{{value}}" aria-pressed="{{#active}}true{{/active}}{{^active}}false{{/active}}" title="{{label}}">{{> format_fredki/viewicon }}<span class="ffk-viewbtn__label">{{label}}</span></button>{{/views}}
+            </div>
+        </div>
+        {{#hastopics}}
+        <div class="ffk-topics" data-region="topicchips" role="group" aria-label="{{#str}}topics, format_fredki{{/str}}">
+            <button type="button" class="ffk-topicchip is-active" data-action="topicfilter" data-topic="0" aria-pressed="true">{{#str}}topic_all, format_fredki{{/str}}</button>
+            {{#topicchips}}{{#count}}<button type="button" class="ffk-topicchip" data-action="topicfilter" data-topic="{{id}}" aria-pressed="false">{{name}} <span class="ffk-topicchip__n">{{count}}</span></button>{{/count}}{{/topicchips}}
+            {{#haswithout}}<button type="button" class="ffk-topicchip ffk-topicchip--without" data-action="topicfilter" data-topic="-1" aria-pressed="false">{{#str}}topic_without, format_fredki{{/str}} <span class="ffk-topicchip__n">{{withoutcount}}</span></button>{{/haswithout}}
+        </div>
+        {{/hastopics}}
+        <p class="ffk-empty" data-region="noresults" hidden>{{#str}}noresults, format_fredki{{/str}}</p>
+        <div class="ffk-wall" data-region="wall" data-offset="{{cardcount}}">
+            {{#hasimpulse}}{{> format_fredki/impulse }}{{/hasimpulse}}
+            {{#todaycard}}{{> format_fredki/card }}{{/todaycard}}
+            {{^hastodaycard}}{{^hasimpulse}}{{#impulsepending}}{{> format_fredki/impulse }}{{/impulsepending}}{{/hasimpulse}}{{/hastodaycard}}
+            {{#cards}}{{> format_fredki/card }}{{/cards}}
+        </div>
+        {{#hasshelves}}
+        <div class="ffk-shelves" data-region="shelves">
+            {{#shelves}}
+            <section class="ffk-shelf{{#iswithout}} ffk-shelf--without{{/iswithout}}" aria-labelledby="ffk-shelf-{{topicid}}" data-topic="{{topicid}}">
+                <header class="ffk-shelf__head">
+                    <h4 class="ffk-shelf__name" id="ffk-shelf-{{topicid}}">{{name}}</h4>
+                    <span class="ffk-shelf__count">{{countlabel}}</span>
+                    {{#hasmaturity}}<span class="ffk-maturity ffk-maturity--{{maturitylevel}}" title="{{#str}}maturity_title, format_fredki{{/str}}"><span class="ffk-maturity__steps" aria-hidden="true">{{#maturitysteps}}<i{{#on}} class="is-on"{{/on}}></i>{{/maturitysteps}}</span><span class="ffk-maturity__label"><span class="sr-only">{{#str}}maturity, format_fredki{{/str}}: </span>{{maturitylabel}}</span></span>{{/hasmaturity}}
+                    <button type="button" class="ffk-shelf__all" data-action="topicfilter" data-topic="{{topicid}}" aria-label="{{#str}}topic_showall_label, format_fredki, {{name}}{{/str}}">{{#str}}topic_showall, format_fredki{{/str}}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+                </header>
+                <div class="ffk-shelf__tiles">{{#cards}}{{> format_fredki/shelftile }}{{/cards}}</div>
+            </section>
+            {{/shelves}}
+        </div>
+        {{/hasshelves}}
+        {{^hascards}}{{^hastodaycard}}{{^hasimpulse}}<p class="ffk-empty" data-region="nocards">{{#str}}nocards, format_fredki{{/str}}</p>{{/hasimpulse}}{{/hastodaycard}}{{/hascards}}
+        <div class="ffk-wallfoot">
+            <button type="button" class="ffk-loadmore" data-action="loadmore"{{^hasmore}} hidden{{/hasmore}}>{{#str}}loadmore, format_fredki{{/str}}</button>
+            {{#canmoderate}}<a class="ffk-more" href="{{forumurl}}">{{#str}}allconversations, format_fredki{{/str}}</a>{{/canmoderate}}
+            {{#canmanagetopics}}<a class="ffk-more" href="{{topicsurl}}">{{#str}}topics_manage, format_fredki{{/str}}</a>{{/canmanagetopics}}
+            {{#privacy.show}}<button type="button" class="ffk-privacylink" data-action="privacy">{{#str}}privacylink, format_fredki{{/str}}</button>{{/privacy.show}}
+        </div>
+        {{/hascommunity}}
+
+        {{^hascommunity}}
+        <div class="ffk-empty">
+            {{^canaddforum}}<p>{{#str}}nocommunity_learner, format_fredki{{/str}}</p>{{/canaddforum}}
+            {{#agentsneedforum}}<p>{{#str}}agentsneedforum, format_fredki{{/str}}</p>{{/agentsneedforum}}
+            {{#canaddforum}}<a class="btn btn-primary" href="{{addforumurl}}">{{#str}}addforum, format_fredki{{/str}}</a>{{/canaddforum}}
+        </div>
+        {{/hascommunity}}
+    </section>
+    {{#council}}{{> format_fredki/council }}{{/council}}
+    </div>
+    {{#definitionsurl}}
+    <dialog class="ffk-dialog" data-region="defdialog" aria-labelledby="ffk-def-title">
+        <article class="ffk-conv ffk-privacy ffk-defs">
+            <button type="button" class="ffk-conv__close" data-action="closeprivacy" title="{{#str}}closeconversation, format_fredki{{/str}}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                <span class="sr-only">{{#str}}closeconversation, format_fredki{{/str}}</span>
+            </button>
+            <div class="ffk-defs__head">
+                <h2 class="ffk-conv__title" id="ffk-def-title">{{#str}}definitions_title, format_fredki{{/str}}</h2>
+                <p class="ffk-defs__intro">{{#str}}definitions_intro, format_fredki{{/str}}</p>
+                <div class="ffk-defs__tools">
+                    <label class="sr-only" for="ffk-def-search">{{#str}}definitions_search, format_fredki{{/str}}</label>
+                    <input type="search" id="ffk-def-search" class="ffk-defs__search" data-region="defsearch" autocomplete="off" placeholder="{{#str}}definitions_search, format_fredki{{/str}}">
+                    <span class="ffk-defs__count" data-region="defcount" aria-live="polite"></span>
+                </div>
+                <nav class="ffk-defs__az" data-region="defaz" aria-label="{{#str}}definitions_letters, format_fredki{{/str}}"></nav>
+            </div>
+            <div class="ffk-conv__in ffk-defs__in" data-region="defbody" tabindex="-1">
+                <div data-region="deflist"></div>
+                <p class="ffk-defs__none" data-region="defnone" hidden>{{#str}}definitions_none, format_fredki{{/str}}</p>
+                {{#caneditdefinitions}}<p class="ffk-defs__edit"><a href="{{definitionsurl}}">{{#str}}definitions_edit, format_fredki{{/str}}</a></p>{{/caneditdefinitions}}
+            </div>
+        </article>
+    </dialog>
+    {{/definitionsurl}}
+    {{#privacy.show}}
+    <dialog class="ffk-dialog" data-region="privacydialog" aria-labelledby="ffk-privacy-title">
+        <article class="ffk-conv ffk-privacy">
+            <button type="button" class="ffk-conv__close" data-action="closeprivacy" title="{{#str}}closeconversation, format_fredki{{/str}}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                <span class="sr-only">{{#str}}closeconversation, format_fredki{{/str}}</span>
+            </button>
+            <div class="ffk-conv__in ffk-privacy__in">
+                <h2 class="ffk-conv__title" id="ffk-privacy-title">{{#str}}privacylink, format_fredki{{/str}}</h2>
+                <div class="ffk-privacy__text">{{{privacy.html}}}</div>
+            </div>
+        </article>
+    </dialog>
+    {{/privacy.show}}
+</div>
