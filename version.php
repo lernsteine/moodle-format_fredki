@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'format_fredki';
-$plugin->version = 2026111401;
+$plugin->version = 2026111500;
 $plugin->requires = 2024100700;
-$plugin->supported = [405, 405];
+$plugin->supported = [405, 503];
 $plugin->maturity = MATURITY_STABLE;
-$plugin->release = '1.0.2';
+$plugin->release = '1.1.0';

@@ -36,7 +36,7 @@ $context = context_course::instance($course->id);
 
 if (($marker >= 0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
     $course->marker = $marker;
-    course_set_marker($course->id, $marker);
+    format_fredki_set_marker((int)$course->id, (int)$marker);
 }
 
 course_create_sections_if_missing($course, 0);

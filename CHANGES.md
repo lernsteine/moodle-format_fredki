@@ -1,5 +1,11 @@
 # Changes
 
+## 1.1.0 (2026-11-15)
+
+- Moodle 5.0 to 5.3 supported (tested with Moodle 4.5 and 5.3).
+- Moodle 5.2+: the highlight of a learning step uses the section actions of the course format API
+  (`course_set_marker()` is deprecated); Moodle 5.3+: the FredKI account is created with `\core\user::create_user()`.
+
 ## 1.0.2 (2026-11-14)
 
 - The "Learn more" link of the trainer hint leads to https://fredki.com/ (sites that kept the former default are

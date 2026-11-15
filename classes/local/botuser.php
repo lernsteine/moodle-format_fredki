@@ -59,7 +59,9 @@ class botuser {
             'mnethostid' => $CFG->mnet_localhost_id,
             'lang' => $CFG->lang,
         ];
-        $id = user_create_user($user, false, false);
+        // Moodle 5.3 replaces user_create_user() by \core\user::create_user().
+        $id = method_exists(\core\user::class, 'create_user')
+            ? \core\user::create_user((object)$user, false, false) : user_create_user($user, false, false);
         set_user_preference('message_provider_mod_forum_posts_enabled', 'none', $id);
         self::set_picture($id);
         set_config('botuserid', $id, 'format_fredki');

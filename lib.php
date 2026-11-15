@@ -505,7 +505,7 @@ class format_fredki extends core_courseformat\base {
         global $PAGE;
         if ($section->section && ($action === 'setmarker' || $action === 'removemarker')) {
             require_capability('moodle/course:setcurrentsection', context_course::instance($this->courseid));
-            course_set_marker($this->courseid, ($action === 'setmarker') ? $section->section : 0);
+            format_fredki_set_marker($this->courseid, ($action === 'setmarker') ? (int)$section->section : 0);
             return null;
         }
         $rv = parent::section_action($section, $action, $sr);
@@ -605,4 +605,25 @@ function format_fredki_pluginfile($course, $cm, $context, $filearea, $args, $for
         return false;
     }
     send_stored_file($file, 86400, 0, $forcedownload, $options);
+}
+
+/**
+ * Highlight a section (0 removes the highlight), with the format actions of Moodle 5.2+ where available.
+ *
+ * @param int $courseid Course id.
+ * @param int $sectionnum Section number or 0.
+ */
+function format_fredki_set_marker(int $courseid, int $sectionnum): void {
+    global $CFG;
+    if (method_exists(\core_courseformat\local\sectionactions::class, 'remove_all_markers')) {
+        $actions = \core_courseformat\formatactions::section($courseid);
+        if ($sectionnum > 0) {
+            $actions->set_marker(get_fast_modinfo($courseid)->get_section_info($sectionnum), true);
+        } else {
+            $actions->remove_all_markers();
+        }
+        return;
+    }
+    require_once($CFG->dirroot . '/course/lib.php');
+    course_set_marker($courseid, $sectionnum);
 }

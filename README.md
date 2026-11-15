@@ -53,7 +53,7 @@ Where FredKI's answers come from:
 
 ## Requirements
 
-- Moodle 4.5
+- Moodle 4.5 to 5.3
 - Optional: `block_fredkiteamagents` (learning companion and expert round; needs `block_fredkitheagent` for
   the activation of the site)
 - Optional: `local_fredkichat` (FredKI Chat) as an alternative source for FredKI's answers
