@@ -1,5 +1,13 @@
 # Changes
 
+## 1.1.1 (2026-11-24)
+
+- Marketplace review: LICENSE file (GNU GPL v3) in the plugin root.
+- Language strings for the caches of the plugin (`cachedef_impulse`, `cachedef_answers`, `cachedef_agentstatus`).
+- The learning space builds its markup in Mustache templates instead of HTML strings in JavaScript: notes of
+  agents, the definition note, related conversations, the term card, the definitions list, the dialog to correct a
+  post, the choice of who answers, and the chips, line and menu of the topic fields.
+
 ## 1.1.0 (2026-11-15)
 
 - Moodle 5.0 to 5.3 supported (tested with Moodle 4.5 and 5.3).

@@ -20,7 +20,9 @@
  * @copyright  2026 lernsteine.com
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'core/notification'], function(Ajax, Templates, Str, Notification) {
+define('format_fredki/lernraum', [
+    'core/ajax', 'core/templates', 'core/str', 'core/notification'
+], function(Ajax, Templates, Str, Notification) {
     'use strict';
 
     // Keep in step with lernraum::JS_STRINGS (PHP), which sends these strings with the page.
@@ -100,8 +102,61 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
         return html;
     };
 
-    var typingHtml = function() {
-        return '<span class="ffk-typing" aria-label="' + esc(str.thinking) + '"><i></i><i></i><i></i></span>';
+    /**
+     * Three dots while FredKI writes.
+     *
+     * @returns {HTMLElement}
+     */
+    var typing = function() {
+        var dots = document.createElement('span');
+        dots.className = 'ffk-typing';
+        dots.setAttribute('aria-label', str.thinking);
+        for (var i = 0; i < 3; i++) {
+            dots.appendChild(document.createElement('i'));
+        }
+        return dots;
+    };
+
+    /**
+     * A small FredKI orb.
+     *
+     * @returns {HTMLElement}
+     */
+    var orb = function() {
+        var span = document.createElement('span');
+        span.className = 'ffk-orb ffk-orb--xs';
+        span.setAttribute('aria-hidden', 'true');
+        return span;
+    };
+
+    /**
+     * Fill an element with a template of the format.
+     *
+     * @param {HTMLElement} node
+     * @param {String} name Template name without component.
+     * @param {Object} context
+     * @returns {Promise} Resolves with the node.
+     */
+    var fill = function(node, name, context) {
+        return Templates.renderForPromise('format_fredki/' + name, context).then(function(rendered) {
+            Templates.replaceNodeContents(node, rendered.html, rendered.js);
+            return node;
+        });
+    };
+
+    /**
+     * Add a template of the format at the end of an element.
+     *
+     * @param {HTMLElement} parent
+     * @param {String} name Template name without component.
+     * @param {Object} context
+     * @returns {Promise} Resolves with the new element.
+     */
+    var appendTemplate = function(parent, name, context) {
+        return Templates.renderForPromise('format_fredki/' + name, context).then(function(rendered) {
+            Templates.appendNodeContents(parent, rendered.html, rendered.js);
+            return parent.lastElementChild;
+        });
     };
 
     /**
@@ -243,8 +298,11 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
         var notes = card.querySelector('[data-region="notes"]');
         var note = document.createElement('div');
         note.className = 'ffk-note ffk-note--ai';
-        note.innerHTML = '<span class="ffk-orb ffk-orb--xs" aria-hidden="true"></span><span class="ffk-note__text">' +
-            typingHtml() + '</span>';
+        var text = document.createElement('span');
+        text.className = 'ffk-note__text';
+        text.appendChild(typing());
+        note.appendChild(orb());
+        note.appendChild(text);
         notes.appendChild(note);
         trimNotes(card);
         return note;
@@ -301,13 +359,12 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             if (!items.length) {
                 return;
             }
-            var box = document.createElement('div');
-            box.className = 'ffk-related';
-            box.innerHTML = '<span>' + esc(str.relatedintro) + '</span>' + items.map(function(item) {
-                return '<a href="' + esc(item.url) + '">' + esc(item.firstname) + ': ' + esc(item.subject) + '</a>';
-            }).join('');
-            bubble.appendChild(box);
-            return;
+            return appendTemplate(bubble, 'related', {
+                intro: str.relatedintro,
+                items: items.map(function(item) {
+                    return {url: item.url, label: item.firstname + ': ' + item.subject};
+                })
+            });
         }).catch(function() {
             // Related conversations are a quiet extra. Errors are not shown.
         });
@@ -330,7 +387,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
         convo.appendChild(me);
         var bubble = document.createElement('div');
         bubble.className = 'ffk-bubble ffk-bubble--ai';
-        bubble.innerHTML = typingHtml();
+        bubble.replaceChildren(typing());
         convo.appendChild(bubble);
         convo.scrollTop = convo.scrollHeight;
 
@@ -394,14 +451,9 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             }
             bubble.appendChild(row);
             if (result.done.term) {
-                var note = document.createElement('div');
-                note.className = 'ffk-defnote';
-                note.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
-                    'stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
-                    '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/></svg><span>' +
-                    esc((result.done.termsaved ? str.definitions_saved : str.definitions_exists).replace('{$a}', result.done.term)) +
-                    '</span>';
-                bubble.appendChild(note);
+                appendTemplate(bubble, 'defnote', {
+                    text: (result.done.termsaved ? str.definitions_saved : str.definitions_exists).replace('{$a}', result.done.term)
+                }).catch(Notification.exception);
                 addTerm(result.done);
             } else if (mode === 'ask') {
                 showRelated(question, bubble);
@@ -444,7 +496,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             post.addEventListener('click', function() {
                 post.disabled = true;
                 row.remove();
-                text.innerHTML = typingHtml();
+                text.replaceChildren(typing());
                 fredkiReply(card, {mode: 'share', token: token}, note);
             });
             discard.addEventListener('click', function() {
@@ -511,9 +563,8 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             var note = document.createElement('div');
             note.className = 'ffk-note ffk-note--agent ffk-note--thinking';
             note.dataset.thinking = '1';
-            note.innerHTML = '<img class="ffk-av ffk-av--agent" alt="" src="' + esc(agent.image) + '" style="border-color:'
-                + esc(agent.colour) + '"><span class="ffk-note__text">' + esc(agent.thinking) + '</span>';
             notes.appendChild(note);
+            fill(note, 'agentnote', {agents: [agent], text: agent.thinking}).catch(Notification.exception);
         });
         var discussionid = parseInt(card.dataset.discussionid, 10);
         var tries = 0;
@@ -541,8 +592,8 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
                         // No answer in time (e.g. the daily limit of the agent is reached): say so instead of waiting.
                         var note = document.createElement('div');
                         note.className = 'ffk-note ffk-note--agent ffk-note--thinking';
-                        note.innerHTML = '<span class="ffk-note__text">' + esc(str.agentnoanswer) + '</span>';
                         fresh.querySelector('[data-region="notes"]').appendChild(note);
+                        return fill(note, 'agentnote', {agents: [], text: str.agentnoanswer});
                     }
                     return;
                 });
@@ -764,12 +815,13 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
         }
         var note = document.createElement('div');
         note.className = 'ffk-note ffk-note--agent ffk-note--thinking';
-        note.innerHTML = (agent ? '<img class="ffk-av ffk-av--agent" alt="" src="' + esc(agent.image) +
-            '" style="border-color:' + esc(agent.colour) + '">' : '') + '<span class="ffk-note__text">' + esc(text) + '</span>';
         notes.appendChild(note);
-        if (card.dataset.view === 'full') {
-            note.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-        }
+        fill(note, 'agentnote', {agents: agent ? [agent] : [], text: text}).then(function() {
+            if (card.dataset.view === 'full') {
+                note.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+            }
+            return note;
+        }).catch(Notification.exception);
     };
 
     /**
@@ -993,31 +1045,40 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
         if (termpop.parentNode !== host) {
             host.appendChild(termpop);
         }
-        termpop.innerHTML = '<div class="ffk-termpop__head"><strong>' + esc(term.concept) + '</strong>' +
-            (term.ai ? '<span class="ffk-ai-chip">' + esc(str.termai) + '</span>' : '') + '</div>' +
-            '<p>' + esc(term.definition) + '</p>' +
-            '<button type="button" class="ffk-termpop__more" data-defterm="' + esc(term.concept) + '">' +
-            esc(str.definitions_open) + '</button>';
-        termpop.hidden = false;
-        termpop.classList.add('is-open');
-        var r = target.getBoundingClientRect();
-        var width = Math.min(320, window.innerWidth - 24);
-        termpop.style.width = width + 'px';
-        var left = Math.max(12, Math.min(r.left, window.innerWidth - width - 12));
-        var top = r.bottom + 8;
-        // Not enough room below: above the term.
-        var height = termpop.offsetHeight;
-        if (r.bottom + height + 16 > window.innerHeight && r.top > height + 16) {
-            top = r.top - height - 8;
-        }
-        termpop.style.left = left + 'px';
-        termpop.style.top = top + 'px';
-        // An open window may be the frame of "fixed" (it is moved by a transform): correct by what really happened.
-        var got = termpop.getBoundingClientRect();
-        if (Math.abs(got.left - left) > 1 || Math.abs(got.top - top) > 1) {
-            termpop.style.left = (2 * left - got.left) + 'px';
-            termpop.style.top = (2 * top - got.top) + 'px';
-        }
+        termpop.dataset.showing = target.dataset.term;
+        fill(termpop, 'termpop', {
+            concept: term.concept,
+            ai: !!term.ai,
+            ailabel: str.termai,
+            definition: term.definition,
+            morelabel: str.definitions_open
+        }).then(function() {
+            if (termpop.dataset.showing !== target.dataset.term) {
+                // Meanwhile another term was chosen.
+                return null;
+            }
+            termpop.hidden = false;
+            termpop.classList.add('is-open');
+            var r = target.getBoundingClientRect();
+            var width = Math.min(320, window.innerWidth - 24);
+            termpop.style.width = width + 'px';
+            var left = Math.max(12, Math.min(r.left, window.innerWidth - width - 12));
+            var top = r.bottom + 8;
+            // Not enough room below: above the term.
+            var height = termpop.offsetHeight;
+            if (r.bottom + height + 16 > window.innerHeight && r.top > height + 16) {
+                top = r.top - height - 8;
+            }
+            termpop.style.left = left + 'px';
+            termpop.style.top = top + 'px';
+            // An open window may be the frame of "fixed" (it is moved by a transform): correct by what really happened.
+            var got = termpop.getBoundingClientRect();
+            if (Math.abs(got.left - left) > 1 || Math.abs(got.top - top) > 1) {
+                termpop.style.left = (2 * left - got.left) + 'px';
+                termpop.style.top = (2 * top - got.top) + 'px';
+            }
+            return null;
+        }).catch(Notification.exception);
     };
 
     /**
@@ -1138,6 +1199,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
      * Draw the list of definitions, grouped by letter and filtered by the search words.
      *
      * @param {HTMLElement} dialog
+     * @returns {Promise} Resolves with whether this drawing is the current one.
      */
     var drawDefinitions = function(dialog) {
         var search = dialog.querySelector('[data-region="defsearch"]');
@@ -1158,22 +1220,35 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             }
             byletter[letter].push(t);
         });
-        dialog.querySelector('[data-region="deflist"]').innerHTML = groups.map(function(letter) {
-            return '<section class="ffk-defs__group" id="ffk-def-' + (letter === '#' ? 'other' : letter) + '">' +
-                '<h3 class="ffk-defs__letter">' + esc(letter) + '</h3><dl>' +
-                byletter[letter].map(function(t) {
-                    return '<div class="ffk-defs__item" data-defitem="' + esc(t.concept.toLowerCase()) + '"><dt>' +
-                        esc(t.concept) + (t.ai ? ' <span class="ffk-ai-chip">' + esc(str.termai) + '</span>' : '') +
-                        '</dt><dd>' + esc(t.definition) + '</dd></div>';
-                }).join('') + '</dl></section>';
-        }).join('');
-        dialog.querySelector('[data-region="defaz"]').innerHTML = groups.map(function(letter) {
-            return '<a href="#ffk-def-' + (letter === '#' ? 'other' : letter) + '" data-defletter="' +
-                (letter === '#' ? 'other' : letter) + '">' + esc(letter) + '</a>';
-        }).join('');
+        var context = {
+            ailabel: str.termai,
+            groups: groups.map(function(letter) {
+                return {
+                    anchor: letter === '#' ? 'other' : letter,
+                    letter: letter,
+                    terms: byletter[letter].map(function(t) {
+                        return {key: t.concept.toLowerCase(), concept: t.concept, ai: !!t.ai, definition: t.definition};
+                    })
+                };
+            })
+        };
         dialog.querySelector('[data-region="defnone"]').hidden = terms.length > 0;
         dialog.querySelector('[data-region="defcount"]').textContent = terms.length === 1
             ? str.definitions_countone : str.definitions_count.replace('{$a}', terms.length);
+        var draw = String(parseInt(dialog.dataset.draw || '0', 10) + 1);
+        dialog.dataset.draw = draw;
+        return Promise.all([
+            Templates.renderForPromise('format_fredki/definitions', context),
+            Templates.renderForPromise('format_fredki/definitionsaz', context)
+        ]).then(function(rendered) {
+            if (dialog.dataset.draw !== draw) {
+                // Meanwhile the search words changed.
+                return false;
+            }
+            Templates.replaceNodeContents(dialog.querySelector('[data-region="deflist"]'), rendered[0].html, rendered[0].js);
+            Templates.replaceNodeContents(dialog.querySelector('[data-region="defaz"]'), rendered[1].html, rendered[1].js);
+            return true;
+        });
     };
 
     /**
@@ -1204,7 +1279,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
                 }
             });
             dialog.querySelector('[data-region="defsearch"]').addEventListener('input', function() {
-                drawDefinitions(dialog);
+                drawDefinitions(dialog).catch(Notification.exception);
             });
             dialog.addEventListener('close', function() {
                 document.documentElement.classList.remove('ffk-noscroll');
@@ -1212,29 +1287,26 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
         }
         var search = dialog.querySelector('[data-region="defsearch"]');
         search.value = '';
-        drawDefinitions(dialog);
         if (!dialog.open) {
             dialog.showModal();
             document.documentElement.classList.add('ffk-noscroll');
         }
-        var item = concept ? dialog.querySelector('[data-defitem="' + CSS.escape(String(concept).toLowerCase()) + '"]') : null;
-        if (item) {
-            item.classList.add('is-focus');
-            item.scrollIntoView({block: 'center'});
-        } else {
-            search.focus();
-        }
+        drawDefinitions(dialog).then(function(current) {
+            if (!current) {
+                return;
+            }
+            var item = concept ? dialog.querySelector('[data-defitem="' + CSS.escape(String(concept).toLowerCase()) + '"]')
+                : null;
+            if (item) {
+                item.classList.add('is-focus');
+                item.scrollIntoView({block: 'center'});
+            } else {
+                search.focus();
+            }
+            return;
+        }).catch(Notification.exception);
         return true;
     };
-
-    /** @var {String} Pencil icon (correct an own post). */
-    var PEN = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" ' +
-        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 20h9"/>' +
-        '<path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
-
-    /** @var {String} Check icon (the post is fine, let the agents answer now). */
-    var CHECK = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" ' +
-        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>';
 
     /**
      * Let a writing field fit its text: one line when empty, a few more while typing, then it scrolls.
@@ -1322,17 +1394,17 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
                 var note = document.createElement('div');
                 note.className = 'ffk-note ffk-note--agent ffk-note--pending';
                 note.dataset.pending = postid;
-                note.innerHTML = wait.agents.map(function(agent) {
-                    return '<img class="ffk-av ffk-av--agent" alt="" src="' + esc(agent.image) + '" style="border-color:' +
-                        esc(agent.colour) + '">';
-                }).join('') + '<span class="ffk-note__text ffk-pending__text">' + esc(label) + ' <span data-region="clock">' +
-                    clock(wait.deadline - Date.now()) + '</span></span><span class="ffk-pending__tools">' +
-                    (Date.now() < wait.editUntil ? '<button type="button" class="ffk-pen" data-action="pending-edit" ' +
-                    'data-postid="' + postid + '" title="' + esc(str.pendingedit) + '" aria-label="' + esc(str.pendingedit) +
-                    '">' + PEN + '</button>' : '') + '<button type="button" class="ffk-check" data-action="pending-now" ' +
-                    'data-postid="' + postid + '" title="' + esc(str.pendingnow) + '" aria-label="' + esc(str.pendingnow) + '">' +
-                    CHECK + '</button></span>';
                 notes.appendChild(note);
+                fill(note, 'agentnote', {
+                    pending: true,
+                    postid: postid,
+                    agents: wait.agents,
+                    text: label,
+                    clock: clock(wait.deadline - Date.now()),
+                    canedit: Date.now() < wait.editUntil,
+                    editlabel: str.pendingedit,
+                    nowlabel: str.pendingnow
+                }).catch(Notification.exception);
             });
         });
     };
@@ -1430,14 +1502,17 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             methodname: 'format_fredki_edit_post',
             args: {courseid: config.courseid, postid: postid, text: ''}
         }])[0].then(function(current) {
+            return Promise.all([current, Templates.renderForPromise('format_fredki/editdialog', {
+                title: str.edittitle,
+                delete: str.delete,
+                cancel: str.editcancel,
+                save: str.editsave
+            })]);
+        }).then(function(results) {
+            var current = results[0];
             var dialog = document.createElement('dialog');
             dialog.className = 'ffk-editdialog';
-            dialog.innerHTML = '<form method="dialog" class="ffk-editdialog__in"><h2 class="ffk-editdialog__title">' +
-                esc(str.edittitle) + '</h2><textarea rows="5" aria-label="' + esc(str.edittitle) + '"></textarea>' +
-                '<div class="ffk-editdialog__actions"><button type="button" class="ffk-editdialog__delete" value="delete">' +
-                esc(str.delete) + '</button><button type="button" class="ffk-ic ffk-ic--text" value="cancel">' +
-                esc(str.editcancel) + '</button><button type="submit" class="ffk-ic ffk-ic--text ffk-ic--reply">' +
-                esc(str.editsave) + '</button></div></form>';
+            Templates.replaceNodeContents(dialog, results[1].html, results[1].js);
             var area = dialog.querySelector('textarea');
             area.value = current.text;
             (root.querySelector('[data-region="convdialog"][open]') || root).appendChild(dialog);
@@ -1586,6 +1661,18 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
     };
 
     /**
+     * The words "Who answers?" in front of the chips.
+     *
+     * @returns {HTMLElement}
+     */
+    var pickLabel = function() {
+        var label = document.createElement('span');
+        label.className = 'ffk-agentpick__label';
+        label.textContent = str.whoanswers;
+        return label;
+    };
+
+    /**
      * Fill a selection of agents: one chip per active agent, the first one chosen. More can be added; they answer
      * one after another, so a new question is not flooded with answers.
      *
@@ -1595,10 +1682,10 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
      */
     var fillPicker = function(pick, input, single, withprivate, optional) {
         var agents = activeAgents();
-        pick.innerHTML = '';
+        pick.replaceChildren();
         pick.dataset.optional = optional ? '1' : '0';
         if (optional) {
-            pick.insertAdjacentHTML('afterbegin', '<span class="ffk-agentpick__label">' + esc(str.whoanswers) + '</span>');
+            pick.prepend(pickLabel());
         }
         var bar = pick.closest('[data-region="councilbar"]');
         var setPrivate = function(on) {
@@ -1616,10 +1703,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             mine.className = 'ffk-pick ffk-pick--private';
             mine.dataset.private = '1';
             mine.setAttribute('aria-pressed', 'true');
-            mine.innerHTML = '<span class="ffk-orb ffk-orb--xs" aria-hidden="true"></span><span>' + esc(str.askprivate) +
-                '</span><svg class="ffk-pick__tick" width="12" height="12" viewBox="0 0 24 24" fill="none" ' +
-                'stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ' +
-                'focusable="false"><path d="M5 12l5 5 9-10"/></svg>';
+            fill(mine, 'pickchip', {orb: true, label: str.askprivate}).catch(Notification.exception);
             mine.addEventListener('click', function() {
                 var on = mine.getAttribute('aria-pressed') !== 'true';
                 mine.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -1640,11 +1724,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             chip.dataset.agentid = String(agent.id);
             chip.setAttribute('aria-pressed', !withprivate && !optional && agents.indexOf(agent) === 0 ? 'true' : 'false');
             chip.style.setProperty('--agent', agent.colour || '#3149d6');
-            chip.innerHTML = (agent.image ? '<img src="' + esc(agent.image) + '" alt="">' : '') +
-                '<span>' + esc(agent.name) + '</span>' +
-                '<svg class="ffk-pick__tick" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
-                ' stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
-                '<path d="M5 12l5 5 9-10"/></svg>';
+            fill(chip, 'pickchip', {image: agent.image || '', label: agent.name}).catch(Notification.exception);
             chip.addEventListener('click', function() {
                 var on = chip.getAttribute('aria-pressed') !== 'true';
                 chip.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -1732,7 +1812,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             if (activeAgents().length) {
                 fillPicker(pick, input, 'replyagentplaceholder', false, true);
             } else {
-                pick.innerHTML = '<span class="ffk-agentpick__label">' + esc(str.whoanswers) + '</span>';
+                pick.replaceChildren(pickLabel());
                 pick.dataset.optional = '1';
             }
             if (!withfredki) {
@@ -1743,10 +1823,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             chip.type = 'button';
             chip.className = 'ffk-pick ffk-pick--fredki';
             chip.setAttribute('aria-pressed', 'false');
-            chip.innerHTML = '<span class="ffk-orb ffk-orb--xs" aria-hidden="true"></span><span>FredKI</span>' +
-                '<svg class="ffk-pick__tick" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"' +
-                ' stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
-                '<path d="M5 12l5 5 9-10"/></svg>';
+            fill(chip, 'pickchip', {orb: true, label: 'FredKI'}).catch(Notification.exception);
             chip.addEventListener('click', function() {
                 chip.setAttribute('aria-pressed', chip.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
                 pickPlaceholder(pick, input, 'replyagentplaceholder');
@@ -1756,7 +1833,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             pick.hidden = false;
         } else {
             pick.hidden = true;
-            pick.innerHTML = '';
+            pick.replaceChildren();
         }
     };
 
@@ -1921,7 +1998,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             }
             if (!now) {
                 results.hidden = true;
-                results.innerHTML = '';
+                results.replaceChildren();
                 wall.hidden = false;
                 if (more) {
                     more.hidden = wallmore;
@@ -1938,7 +2015,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
                 if (query !== text || topic !== chosen) {
                     return null;
                 }
-                results.innerHTML = '';
+                results.replaceChildren();
                 results.hidden = false;
                 wall.hidden = true;
                 searchoffset = response.cards.length;
@@ -2048,21 +2125,18 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             filters.parentNode.insertBefore(chips, filters.nextSibling);
         }
         var chip = function(id, label, count, extra) {
-            var on = id === topic;
-            return '<button type="button" class="ffk-topicchip' + (extra || '') + (on ? ' is-active' : '')
-                + '" data-action="topicfilter" data-topic="' + id + '" aria-pressed="' + (on ? 'true' : 'false') + '">'
-                + esc(label) + (count === null ? '' : ' <span class="ffk-topicchip__n">' + count + '</span>') + '</button>';
+            return {id: id, label: label, count: count, hascount: count !== null, without: !!extra, on: id === topic};
         };
-        var html = chip(0, str.topic_all, null);
+        var list = [chip(0, str.topic_all, null)];
         topics.forEach(function(t) {
             if (t.count > 0 || t.id === topic) {
-                html += chip(t.id, t.name, t.count);
+                list.push(chip(t.id, t.name, t.count));
             }
         });
         if (without > 0) {
-            html += chip(-1, str.topic_without, without, ' ffk-topicchip--without');
+            list.push(chip(-1, str.topic_without, without, true));
         }
-        chips.innerHTML = html;
+        fill(chips, 'topicchips', {chips: list}).catch(Notification.exception);
     };
 
     /**
@@ -2079,27 +2153,33 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             if (!line) {
                 return;
             }
-            var edit = line.querySelector('[data-action="topicmenu"]');
-            var html = '';
-            if (sorting) {
-                html = '<span class="ffk-topictag ffk-topictag--sorting"><span class="ffk-orb ffk-orb--xs" aria-hidden="true">'
-                    + '</span>' + esc(str.topic_sorting) + '</span>';
-            } else if (topicid) {
-                html = '<button type="button" class="ffk-topictag" data-action="topicfilter" data-topic="' + topicid + '">'
-                    + esc(name) + '</button>';
+            var edit = line.querySelector('[data-action="topicmenu"]') || line.topicmenu;
+            if (edit) {
+                // Kept while the line is drawn again.
+                line.topicmenu = edit;
             }
-            line.innerHTML = html;
-            if (edit && !sorting) {
-                var label = topicid ? str.topic_change : str.topic_add;
-                edit.title = label;
-                edit.querySelector('svg').innerHTML = topicid ? '<path d="M4 20h4L19 9l-4-4L4 16v4z"/>'
-                    : '<path d="M12 5v14M5 12h14"/>';
+            var draw = String(parseInt(line.dataset.draw || '0', 10) + 1);
+            line.dataset.draw = draw;
+            card.dataset.topic = topicid || 0;
+            fill(line, 'topicline', {
+                sorting: !!sorting,
+                sortinglabel: str.topic_sorting,
+                topicid: topicid || 0,
+                name: name || ''
+            }).then(function() {
+                if (line.dataset.draw !== draw || !edit || sorting) {
+                    return line;
+                }
+                edit.title = topicid ? str.topic_change : str.topic_add;
+                var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                path.setAttribute('d', topicid ? 'M4 20h4L19 9l-4-4L4 16v4z' : 'M12 5v14M5 12h14');
+                edit.querySelector('svg').replaceChildren(path);
                 var span = edit.querySelector('span');
                 span.className = topicid ? 'sr-only' : '';
                 span.textContent = topicid ? str.topic_change : str.topic;
                 line.appendChild(edit);
-            }
-            card.dataset.topic = topicid || 0;
+                return line;
+            }).catch(Notification.exception);
         });
     };
 
@@ -2113,7 +2193,9 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
     var setTopic = function(discussionid, args) {
         var before = instancesOf(discussionid)[0];
         var line = before ? before.querySelector('[data-region="topicline"]') : null;
-        var keep = line ? line.innerHTML : '';
+        var keep = line ? Array.prototype.map.call(line.childNodes, function(node) {
+            return node.cloneNode(true);
+        }) : [];
         if (args.suggest) {
             drawTopicLine(discussionid, 0, '', true);
         }
@@ -2141,7 +2223,8 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             return result;
         }).catch(function(error) {
             if (line && line.isConnected) {
-                line.innerHTML = keep;
+                line.dataset.draw = String(parseInt(line.dataset.draw || '0', 10) + 1);
+                line.replaceChildren.apply(line, keep);
             }
             if (!args.suggest) {
                 Notification.exception(error);
@@ -2174,30 +2257,35 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
         menu.dataset.discussionid = card.dataset.discussionid;
         menu.setAttribute('role', 'dialog');
         menu.setAttribute('aria-label', str.topic_menu);
-        var html = '<div class="ffk-topicmenu__list">';
-        (config.topics || []).forEach(function(t) {
-            html += '<button type="button" class="ffk-topicmenu__item' + (t.id === current ? ' is-on' : '') + '" data-topic="'
-                + t.id + '" aria-pressed="' + (t.id === current ? 'true' : 'false') + '">' + esc(t.name) + '</button>';
-        });
-        if (current) {
-            html += '<button type="button" class="ffk-topicmenu__item ffk-topicmenu__item--none" data-topic="0">'
-                + esc(str.topic_none) + '</button>';
-        }
-        html += '</div><form class="ffk-topicmenu__new"><label class="sr-only" for="ffk-topicmenu-new">' + esc(str.topic_create)
-            + '</label><input id="ffk-topicmenu-new" type="text" maxlength="40" autocomplete="off" placeholder="'
-            + esc(str.topic_create) + '"><button type="submit">' + esc(str.topic_new) + '</button></form>';
-        if (config.hasfredki) {
-            html += '<button type="button" class="ffk-topicmenu__suggest" data-suggest="1"><span class="ffk-orb ffk-orb--xs"'
-                + ' aria-hidden="true"></span>' + esc(str.topic_suggest) + '</button>';
-        }
-        menu.innerHTML = html;
+        menu.style.visibility = 'hidden';
         document.body.appendChild(menu);
-        var rect = button.getBoundingClientRect();
-        var width = menu.offsetWidth;
-        menu.style.left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left)) + 'px';
-        var below = rect.bottom + 6;
-        menu.style.top = (below + menu.offsetHeight > window.innerHeight - 8
-            ? Math.max(8, rect.top - menu.offsetHeight - 6) : below) + 'px';
+        fill(menu, 'topicmenu', {
+            items: (config.topics || []).map(function(t) {
+                return {id: t.id, name: t.name, on: t.id === current};
+            }),
+            current: current,
+            nonelabel: str.topic_none,
+            createlabel: str.topic_create,
+            newlabel: str.topic_new,
+            hasfredki: !!config.hasfredki,
+            suggestlabel: str.topic_suggest
+        }).then(function() {
+            if (!menu.isConnected) {
+                return null;
+            }
+            var rect = button.getBoundingClientRect();
+            var width = menu.offsetWidth;
+            menu.style.left = Math.max(8, Math.min(window.innerWidth - width - 8, rect.left)) + 'px';
+            var below = rect.bottom + 6;
+            menu.style.top = (below + menu.offsetHeight > window.innerHeight - 8
+                ? Math.max(8, rect.top - menu.offsetHeight - 6) : below) + 'px';
+            menu.style.visibility = '';
+            var first = menu.querySelector('.is-on') || menu.querySelector('button, input');
+            if (first) {
+                first.focus();
+            }
+            return null;
+        }).catch(Notification.exception);
         button.setAttribute('aria-expanded', 'true');
         var close = function(refocus) {
             menu.remove();
@@ -2237,7 +2325,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             setTopic(card.dataset.discussionid, item.dataset.suggest ? {suggest: true}
                 : {topicid: parseInt(item.dataset.topic, 10)});
         });
-        menu.querySelector('form').addEventListener('submit', function(e) {
+        menu.addEventListener('submit', function(e) {
             e.preventDefault();
             var name = menu.querySelector('input').value.trim();
             if (name) {
@@ -2245,10 +2333,6 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
                 setTopic(card.dataset.discussionid, {name: name});
             }
         });
-        var first = menu.querySelector('.is-on') || menu.querySelector('button, input');
-        if (first) {
-            first.focus();
-        }
     };
 
     /**
@@ -2271,7 +2355,7 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             });
             dialog.addEventListener('close', function() {
                 var open = dialog.dataset.discussionid;
-                dialog.innerHTML = '';
+                dialog.replaceChildren();
                 delete dialog.dataset.discussionid;
                 document.documentElement.classList.remove('ffk-noscroll');
                 if (window.location.hash.indexOf('#gespraech-') === 0) {
@@ -2283,7 +2367,10 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             });
         }
         dialog.dataset.discussionid = String(discussionid);
-        dialog.innerHTML = '<div class="ffk-conv ffk-conv--loading">' + typingHtml() + '</div>';
+        var loading = document.createElement('div');
+        loading.className = 'ffk-conv ffk-conv--loading';
+        loading.appendChild(typing());
+        dialog.replaceChildren(loading);
         if (!dialog.open) {
             dialog.showModal();
         }
@@ -2340,7 +2427,8 @@ define('format_fredki/lernraum', ['core/ajax', 'core/templates', 'core/str', 'co
             note.classList.remove('is-target');
         });
         if (postid && name) {
-            Str.get_string(isagent ? 'replytoagent' : 'replyto', 'format_fredki', isagent ? inSentence(name) : name).then(function(text) {
+            var who = isagent ? inSentence(name) : name;
+            Str.get_string(isagent ? 'replytoagent' : 'replyto', 'format_fredki', who).then(function(text) {
                 head.textContent = text;
                 return;
             }).catch(Notification.exception);
