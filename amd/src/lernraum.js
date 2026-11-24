@@ -347,6 +347,18 @@ define('format_fredki/lernraum', [
     };
 
     /**
+     * Note under a private answer: the term is now (or was already) in the definitions of the group.
+     *
+     * @param {HTMLElement} bubble
+     * @param {Object} done Result of the answer: term, termsaved.
+     */
+    var showDefnote = function(bubble, done) {
+        appendTemplate(bubble, 'defnote', {
+            text: (done.termsaved ? str.definitions_saved : str.definitions_exists).replace('{$a}', done.term)
+        }).catch(Notification.exception);
+    };
+
+    /**
      * Show conversations of the group that relate to a question.
      *
      * @param {String} question
@@ -358,7 +370,7 @@ define('format_fredki/lernraum', [
             args: {courseid: config.courseid, text: question}
         }])[0].then(function(items) {
             if (!items.length) {
-                return;
+                return null;
             }
             return appendTemplate(bubble, 'related', {
                 intro: str.relatedintro,
@@ -452,9 +464,7 @@ define('format_fredki/lernraum', [
             }
             bubble.appendChild(row);
             if (result.done.term) {
-                appendTemplate(bubble, 'defnote', {
-                    text: (result.done.termsaved ? str.definitions_saved : str.definitions_exists).replace('{$a}', result.done.term)
-                }).catch(Notification.exception);
+                showDefnote(bubble, result.done);
                 addTerm(result.done);
             } else if (mode === 'ask') {
                 showRelated(question, bubble);
@@ -599,7 +609,7 @@ define('format_fredki/lernraum', [
                         fresh.querySelector('[data-region="notes"]').appendChild(note);
                         return fill(note, 'agentnote', {agents: [], text: str.agentnoanswer});
                     }
-                    return;
+                    return null;
                 });
             }).catch(function() {
                 if (tries < 40) {
@@ -1508,7 +1518,7 @@ define('format_fredki/lernraum', [
         }])[0].then(function(current) {
             return Promise.all([current, Templates.renderForPromise('format_fredki/editdialog', {
                 title: str.edittitle,
-                delete: str.delete,
+                deletelabel: str.delete,
                 cancel: str.editcancel,
                 save: str.editsave
             })]);
