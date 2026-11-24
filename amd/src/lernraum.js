@@ -229,6 +229,7 @@ define('format_fredki/lernraum', [
      * Prepend a card to the wall, after the impulse card.
      *
      * @param {Object} card Card data from the server.
+     * @param {Number} forumid Forum of the wall the card goes to, 0 for the main wall.
      * @returns {Promise}
      */
     var addCard = function(card, forumid) {
@@ -521,7 +522,10 @@ define('format_fredki/lernraum', [
             return;
         }
         var notes = card.querySelector('[data-region="notes"]');
-        while (notes && notes.children.length > 3) {
+        if (!notes) {
+            return;
+        }
+        while (notes.children.length > 3) {
             notes.removeChild(notes.firstElementChild);
         }
     };
@@ -1679,6 +1683,8 @@ define('format_fredki/lernraum', [
      * @param {HTMLElement} pick
      * @param {HTMLInputElement} input
      * @param {String} single String key for the placeholder with one agent.
+     * @param {Boolean} withprivate Offer FredKI · private as well.
+     * @param {Boolean} optional Nothing is chosen at first; the question can go to the people only.
      */
     var fillPicker = function(pick, input, single, withprivate, optional) {
         var agents = activeAgents();

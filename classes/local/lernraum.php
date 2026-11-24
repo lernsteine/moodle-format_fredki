@@ -459,6 +459,7 @@ class lernraum {
      *
      * @param \renderer_base $output Renderer.
      * @param int $limit Number of cards.
+     * @param int $excludeid Conversation shown separately (question of the day).
      * @return array
      */
     protected function export_community(\renderer_base $output, int $limit, int $excludeid = 0): array {
@@ -643,6 +644,7 @@ class lernraum {
      * @param int $offset Cards already shown.
      * @param int $limit Cards to load.
      * @param string $query Search text, empty for all.
+     * @param int $topicid Topic field, 0 for all, -1 for conversations without topic field.
      * @return array ['cards' => array, 'hasmore' => bool]
      */
     public function export_more_cards(

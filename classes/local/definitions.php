@@ -156,6 +156,7 @@ class definitions {
      * @param \stdClass $course Course.
      * @param string $term Term.
      * @param string $definition Definition (plain text).
+     * @param int $sectionnum Learning step the definition belongs to, 0 for none.
      * @return array ['saved' => bool, 'exists' => bool, 'url' => string]
      */
     public static function add(\stdClass $course, string $term, string $definition, int $sectionnum = 0): array {

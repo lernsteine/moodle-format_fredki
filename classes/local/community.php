@@ -304,6 +304,9 @@ class community {
      * @param array $community Result of get_forum().
      * @param int $limit Maximum number of discussions.
      * @param int $discussionid Restrict to one discussion.
+     * @param int $offset Discussions to skip.
+     * @param string $query Search text, empty for all.
+     * @param int $topicid Topic field, 0 for all, -1 for conversations without topic field.
      * @return \stdClass[]
      */
     public static function load_discussions(
@@ -400,6 +403,10 @@ class community {
      * @param array $community Result of get_forum().
      * @param string[] $fallbackimages Image URLs used when a post has no image of its own.
      * @param int $limit Maximum number of cards.
+     * @param int $excludeid Conversation shown separately (question of the day).
+     * @param int $offset Cards to skip.
+     * @param string $query Search text, empty for all.
+     * @param int $topicid Topic field, 0 for all, -1 for conversations without topic field.
      * @return array
      */
     public static function export_cards(
@@ -1020,6 +1027,7 @@ class community {
      * @param string $text Own words of the user.
      * @param string $question Question the user asked FredKI, if shared.
      * @param string $answer Answer of FredKI, if shared.
+     * @param string $type Kind of the conversation (question, idea or experience), empty for none.
      * @return int Discussion id.
      */
     public static function create_discussion(
